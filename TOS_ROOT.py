@@ -25,5 +25,25 @@ def edit_items():
 @TOS.route("/Select_Item_Category",methods=['GET','POST'])
 def getcategory():
     return select_item_category(request)
+@TOS.route('/get_image')
+def get_image():
+    #if request.args.get('type') == '1':
+     #  filename = 'ok.gif'
+    #else:
+    labels = 'Reservation', 'Modification', 'Cancel'
+
+    sizes = [50, 10, 2]
+    colors = ['gold', 'yellowgreen', 'lightcoral']
+    explode = (0.1, 0, 0)  # explode 1st slice
+
+
+    plt.pie(sizes, explode=explode, labels=labels, colors=colors,
+    autopct='%1.1f%%', shadow=True, startangle=140)
+
+    plt.axis('equal')
+    #plt.show()
+    plt.savefig('mygraph.png')
+    filename = 'mygraph.png'
+    return send_file(filename, mimetype='image/png')
 if __name__ == "__main__":
     TOS.run(host ='192.168.99.1',port =5000)#run web application
