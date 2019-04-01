@@ -43,8 +43,8 @@ def get_image():
 
     plt.axis('equal')
     #plt.show()
-    plt.savefig('/mygraph.png')
-    filename = '/mygraph.png'
+    plt.savefig('mygraph.png')
+    filename = 'mygraph.png'
     return send_file(filename, mimetype='image/png')
 if __name__ == "__main__":
     TOS.run(host ='192.168.99.1',port =5000)#run web application
