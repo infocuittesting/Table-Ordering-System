@@ -26,7 +26,7 @@ def edit_items():
 @TOS.route("/Select_Item_Category",methods=['GET','POST'])
 def getcategory():
     return select_item_category(request)
-@TOS.route('/get_image')
+@TOS.route('/get_image',methods=['GET','POST'])
 def get_image():
     #if request.args.get('type') == '1':
      #  filename = 'ok.gif'
