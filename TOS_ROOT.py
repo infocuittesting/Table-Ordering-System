@@ -33,7 +33,7 @@ def get_image():
     #else:
     labels = 'Reservation', 'Modification', 'Cancel'
 
-    sizes = [50, 10, 2]
+    sizes = [100, 10, 0]
     colors = ['gold', 'yellowgreen', 'lightcoral']
     explode = (0.1, 0, 0)  # explode 1st slice
 
