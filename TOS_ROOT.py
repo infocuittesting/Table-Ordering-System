@@ -5,6 +5,7 @@ TOS = Flask(__name__) #here i set environment varible for flask framework web ap
 CORS(TOS)
 #-----------------------Configuration-------------------
 from food_menus import *
+from Place_Order import *
 #below i set path for web application
 
 @TOS.route("/",methods=['GET','POST'])
@@ -46,5 +47,18 @@ def get_image():
     plt.savefig('mygraph.png')
     filename = 'mygraph.png'
     return send_file(filename, mimetype='image/png')
+#-----------------Table order available or unavailable---------------
+@TOS.route("/Query_Table_Order_Status",methods=['GET'])
+def tablestatus():
+    return Query_Table_Order_Status(request)
+
+
+#-------------PLACE ORDER-------------------------------------------
+@TOS.route("/Choose_Food_Order",methods=['POST'])
+def placeorder():
+    return Place_Order(request)
+@TOS.route("/Query_today_food_orders",methods=['POST'])
+def todayorders():
+    return Query_today_food_orders(request)
 if __name__ == "__main__":
     TOS.run(host ='192.168.99.1',port =5000)#run web application
