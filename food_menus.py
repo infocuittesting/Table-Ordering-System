@@ -3,8 +3,10 @@ def Add_food_menu(request):
    if request.method =="POST":
        s = {}
        d = request.json
-       d['food_id'] = (json.loads(dbget("select * from count_id")))[0]['food_id']
+       
        d['food_name'] = d['food_name'].title()
+       
+       d['food_id'] = json.loads(dbget("select uuid_generate_v4() as order_no"))[0]['order_no']
        if d['item_category_id'].isdigit():
            
            gensql('insert','food_menu',d)
@@ -18,7 +20,7 @@ def Add_food_menu(request):
            
            gensql('insert','food_menu',d)
        
-       dbput("update count_id set food_id = food_id + '1'")
+       
        return json.dumps({"Return": "Record Inserted Successfully","ReturnCode": "RIS","Status": "Success","StatusCode": "200"},indent = 4)
    elif request.method =="GET":
        food_details,food_menu_details = [],[]
@@ -84,3 +86,6 @@ def Update_Food_Menus(request):
          #return json.dumps({"Return": "Food Offer Inserted Successfully","ReturnCode": "FOIS","Status": "Success","StatusCode": "200"},indent = 4)
          
 
+def Query_Table_Order_Status(request):
+   #get_table_status = json.loads(dbget("se"))
+   return "dedwerer"
