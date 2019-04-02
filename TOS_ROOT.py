@@ -1,6 +1,8 @@
-from flask import Flask,request,send_file
+from flask import Flask,request,send_file,render_template
 from flask_cors import CORS
 import matplotlib.pyplot as plt
+import pygal
+from pygal import graph
 TOS = Flask(__name__) #here i set environment varible for flask framework web application
 CORS(TOS)
 #-----------------------Configuration-------------------
