@@ -62,7 +62,7 @@ def placeorder():
 @TOS.route("/Query_today_food_orders",methods=['POST'])
 def todayorders():
     return Query_today_food_orders(request)
-@TOS.route('/pygalexample/'):
+@TOS.route('/pygalexample/')
 def pygalexample():
     pie_chart = pygal.Pie(inner_radius=.4)
     pie_chart.title = 'Browser usage in February 2012 (in %)'
