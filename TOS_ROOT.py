@@ -72,7 +72,7 @@ def pygalexample():
     pie_chart.add('Safari', 4.5)
     pie_chart.add('Opera', 2.3)
     graph_data = pie_chart.render_data_uri()
-	return render_template("graphing.html", graph_data = graph_data)
+    return render_template("graphing.html", graph_data = graph_data)
 	
 if __name__ == "__main__":
     TOS.run(host ='192.168.99.1',port =5000)#run web application
