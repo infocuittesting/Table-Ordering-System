@@ -7,6 +7,7 @@ CORS(TOS)
 #-----------------------Configuration-------------------
 from food_menus import *
 from Place_Order import *
+from Billing_Application import *
 #below i set path for web application
 
 @TOS.route("/",methods=['GET','POST'])
@@ -48,11 +49,9 @@ def get_image():
     plt.savefig('mygraph.png')
     filename = 'mygraph.png'
     return send_file(filename, mimetype='image/png')
-#-----------------Table order available or unavailable---------------
-@TOS.route("/Query_Table_Order_Status",methods=['GET'])
-def tablestatus():
-    return Query_Table_Order_Status(request)
-
+@TOS.route("/Display_Disable_Food_Item",methods=['GET'])
+def getdisableitems():
+    return Display_Disable_Food_Item(request)
 
 #-------------PLACE ORDER-------------------------------------------
 @TOS.route("/Choose_Food_Order",methods=['POST'])
@@ -61,6 +60,30 @@ def placeorder():
 @TOS.route("/Query_today_food_orders",methods=['POST'])
 def todayorders():
     return Query_today_food_orders(request)
+
+@TOS.route("/Query_food_orders",methods=['POST'])
+def getorders():
+    return Query_food_orders(request)
+
+#----------------Billing-----------------------------------------------
+@TOS.route("/Query_Table_Status",methods=['GET'])
+def tablestatus():
+    return Query_Table_Status(request)
+@TOS.route("/Update_Order_Status",methods=['POST'])
+def ordercompleted():
+    return Update_Order_Status(request)
+@TOS.route("/Update_ReadyforPayment_Status",methods=['POST'])
+def tablepaymentstatus():
+    return Update_ReadyforPayment_Status(request)
+@TOS.route("/Update_Table_Available_Status",methods=['POST'])
+def tableavailablestatus():
+    return Update_Table_Available_Status(request)
+@TOS.route("/Get_Order_Item_Table",methods=['POST'])
+def billing_order_item():
+    return Get_Order_Item_Table(request)
+@TOS.route("/Update_Food_Order_Status_Item",methods=['POST'])
+def updatefooditem():
+    return Update_Food_Order_Status_Item(request)
 
 	
 if __name__ == "__main__":
