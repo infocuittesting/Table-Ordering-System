@@ -86,6 +86,9 @@ def Update_Food_Menus(request):
          #return json.dumps({"Return": "Food Offer Inserted Successfully","ReturnCode": "FOIS","Status": "Success","StatusCode": "200"},indent = 4)
          
 
-def Query_Table_Order_Status(request):
-   #get_table_status = json.loads(dbget("se"))
-   return "dedwerer"
+def Display_Disable_Food_Item(request):
+   get_disable_item = json.loads(dbget("select food_status.status, food_category.category,food_menu.* from food_menu  \
+                                        left join food_status on food_status.status_id = food_menu.food_status_id\
+                                        left join food_category on food_category.category_id = food_menu.item_category_id where food_status_id = '2'"))
+   return json.dumps({"Return": "Record Retrived Successfully","ReturnCode": "RRS","Returnvalue":get_disable_item,"Status": "Success","StatusCode": "200"},indent = 4)
+
