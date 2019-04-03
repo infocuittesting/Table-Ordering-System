@@ -1,3 +1,4 @@
+
 from sqlwrapper import  *
 from Fetch_Current_Datetime import *
 
@@ -7,7 +8,7 @@ def Place_Order(request):
     print(d)
     items = d['items']
 
-    orders = json.loads(dbget("select order_no from food_order where table_no="+str(d['table_no'])+" and order_status_id!=7"))
+    orders = json.loads(dbget("select order_no from food_order where table_no="+str(d['table_no'])+" and order_status_id !=7"))
     print(orders)
     
     order_no = json.loads(dbget("select uuid_generate_v4() as order_no"))[0]['order_no'] if len(orders) == 0 else orders[0]['order_no']
@@ -23,19 +24,57 @@ def Place_Order(request):
 
 
 def Query_today_food_orders(request):
-    food_details ,food_order_details= [],[]
-    get_orders=json.loads(dbget("select order_status.order_status_desc,food_menu.food_name,food_category.category, food_order.* from food_order\
+    food_details ,food_order_details,categories= [],[],[]
+    get_orders=json.loads(dbget("select order_status.order_status_desc,food_menu.food_name,food_menu.price,food_category.category, food_order.* from food_order\
+	left join food_menu on food_menu.food_id = food_order.food_id \
+	left join food_category on food_category.category_id =food_menu.item_category_id \
+	left join order_status on order_status.order_status_id = food_order.order_status_id  order by datetime"))
+    for get_order in get_orders:
+          if get_order['table_no'] not in food_details:
+            if get_order['category'] not in categories:
+                 food_details.append(get_order['table_no'])
+                 categories.append(get_order['category'])
+                 food_order_details.append({"tableno":get_order['table_no'],"category_list":[{"category_name":get_order['category'],
+                            "item":[{"food_name":get_order['food_name'],
+                                     "order_id":get_order['food_id'],
+                                     "quantity":get_order['quantity'],
+                                     "price":get_order['price']}
+                                    ]}]})
+            
+          else:
+             for food_order_detail in food_order_details:
+              for category in food_order_detail['category_list']:
+                   if get_order['table_no'] ==food_order_detail['tableno']:
+                      if get_order['category'] == category['category_name']:
+                          print(get_order['category'],category['category_name'])
+                          category['item'].append({"food_name":get_order['food_name'],
+                                     "order_id":get_order['food_id'],
+                                     "quantity":get_order['quantity'],
+                                     "price":get_order['price']})
+                      else:
+                          for food_order_detail in food_order_details:
+                              if get_order['table_no'] ==food_order_detail['tableno']:
+                                 food_order_detail["category_list"].append({"category_name":get_order['category'],
+                                            "item":[{"food_name":get_order['food_name'],
+                                                     "order_id":get_order['food_id'],
+                                                     "quantity":get_order['quantity'],
+                                                     "price":get_order['price']}
+                                                    ]})
+    return json.dumps({"Returnvalue":food_order_details},indent=2)
+
+def Query_food_orders(request):
+    food_order_details,food_details,categories = [],[],[]
+    get_orders=json.loads(dbget("select order_status.order_status_desc,food_menu.food_name,food_menu.price,food_category.category, food_order.* from food_order\
 	left join food_menu on food_menu.food_id = food_order.food_id \
 	left join food_category on food_category.category_id =food_menu.item_category_id \
 	left join order_status on order_status.order_status_id = food_order.order_status_id order by datetime"))
     for get_order in get_orders:
           if get_order['table_no'] not in food_details:
-             food_details.append(get_order['table_no'])
-             food_order_details.append({"tableno":get_order['table_no'],"category_list":[]})
-          else:
-              
-                for food_order_detail in food_order_details:
-                    if get_order['table_no'] ==food_order_detail['tableno']:
-                      food_order_detail["category_list"].append({""+get_order['category']+"":[]})
-    
+            
+                 food_details.append(get_order['table_no'])
+                 food_order_details.append({"tableno":get_order['table_no'],"category_list":[]})
+                 
+   
+                
+                     # if get_order['category'] == category['category_name']:
     return json.dumps({"Returnvalue":food_order_details},indent=2)
