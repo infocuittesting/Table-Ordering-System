@@ -1,6 +1,6 @@
-from flask import Flask,request,send_file,render_template
+from flask import Flask,request
 from flask_cors import CORS
-import matplotlib.pyplot as plt
+
 
 TOS = Flask(__name__) #here i set environment varible for flask framework web application
 CORS(TOS)
@@ -29,35 +29,25 @@ def edit_items():
 @TOS.route("/Select_Item_Category",methods=['GET','POST'])
 def getcategory():
     return select_item_category(request)
-@TOS.route('/get_image',methods=['GET','POST'])
-def get_image():
-    #if request.args.get('type') == '1':
-     #  filename = 'ok.gif'
-    #else:
-    labels = 'Reservation', 'Modification', 'Cancel'
 
-    sizes = [100, 10, 0]
-    colors = ['gold', 'yellowgreen', 'lightcoral']
-    explode = (0.1, 0, 0)  # explode 1st slice
-
-
-    plt.pie(sizes, explode=explode, labels=labels, colors=colors,
-    autopct='%1.1f%%', shadow=True, startangle=140)
-
-    plt.axis('equal')
-    #plt.show()
-    plt.savefig('mygraph.png')
-    filename = 'mygraph.png'
-    return send_file(filename, mimetype='image/png')
 @TOS.route("/Display_Disable_Food_Item",methods=['GET'])
 def getdisableitems():
     return Display_Disable_Food_Item(request)
 
+@TOS.route("/Add_Food_Offers",methods=['POST'])
+def addoffers():
+    return Add_Food_Offers(request)
+@TOS.route("/Update_Food_Offers",methods=['POST'])
+def updateoffers():
+    return Update_Food_Offers(request)
+@TOS.route("/Select_Food_Offers",methods=['POST','GET'])
+def selectoffers():
+    return Select_Food_Offers(request)
 #-------------PLACE ORDER-------------------------------------------
 @TOS.route("/Choose_Food_Order",methods=['POST'])
 def placeorder():
     return Place_Order(request)
-@TOS.route("/Query_today_food_orders",methods=['POST'])
+@TOS.route("/Query_today_food_orders",methods=['POST','GET'])
 def todayorders():
     return Query_today_food_orders(request)
 

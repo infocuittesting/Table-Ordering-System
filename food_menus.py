@@ -48,43 +48,13 @@ def select_item_category(request):
 
 def Update_Food_Menus(request):
    d = request.json
-   #food_id = {k:v for k,v in d.items() if k in ('food_id')}
-   #food = d['food']
-   #offer = d['offer']
-   #food_items = {k:v for k,v in food.items() if v!=None}
-   #gensql('update','food_menu',food_items,food_id)
-   if d['offer_value'] is None and d['offer_type_id'] is None and d['offer_status_id'] is None:
-      
-            s = {k:v for k,v in d.items() if k in ('food_id')}
-            d = {k:v for k,v in d.items() if k not in ('offer_value','offer_type_id','offer_status_id','food_id')}
-            
-            print(s)
-            d['food_name'] = d['food_name'].title()
-            update_item = gensql('update','food_menu',d,s)
-            print(update_item)
-            return json.dumps({"Return": "Record Updated Successfully","ReturnCode": "RUS","Status": "Success","StatusCode": "200"},indent = 4)
-   else:
-      print("its came inside")
-      getcount  = json.loads(dbget("select count(*) from food_offers where food_id = '"+str(d['food_id'])+"'"))
-      s = {k:v for k,v in d.items() if k in ('food_id')}
-      Z = {k:v for k,v in d.items() if k not in ('offer_value','offer_type_id','offer_status_id','food_id')}
-            
-      print(s)
-      Z['food_name'] = Z['food_name'].title()
-      update_item = gensql('update','food_menu',Z,s)
-      if getcount[0]['count'] != 0:
-         a = {k:v for k,v in d.items() if k in ('offer_value','offer_type_id','offer_status_id')}
-         b = {k:v for k,v in d.items() if k in ('food_id')}
-         gensql('update','food_offers',a,b)
-         return json.dumps({"Return": "Record Updated Successfully","ReturnCode": "RUS","Status": "Success","StatusCode": "200"},indent = 4)
-         #return json.dumps({"Return": "Food Offer Updated Successfully","ReturnCode": "FOUS","Status": "Success","StatusCode": "200"},indent = 4)
-      else:
-         print("its OFFER INSERT inside")
-         d = {k:v for k,v in d.items() if k in ('offer_value','offer_type_id','offer_status_id','food_id')}
-         gensql('insert','food_offers',d)
-         return json.dumps({"Return": "Record Updated Successfully","ReturnCode": "RUS","Status": "Success","StatusCode": "200"},indent = 4)
-         #return json.dumps({"Return": "Food Offer Inserted Successfully","ReturnCode": "FOIS","Status": "Success","StatusCode": "200"},indent = 4)
-         
+   
+   s = {k:v for k,v in d.items() if k in ('food_id')}
+   d = {k:v for k,v in d.items() if v is not None if k not in ('food_id')}
+   d['food_name'] = d['food_name'].title()
+   update_item = gensql('update','food_menu',d,s)
+   return json.dumps({"Return": "Record Updated Successfully","ReturnCode": "RUS","Status": "Success","StatusCode": "200"},indent = 4)
+   
 
 def Display_Disable_Food_Item(request):
    get_disable_item = json.loads(dbget("select food_status.status, food_category.category,food_menu.* from food_menu  \
@@ -92,3 +62,75 @@ def Display_Disable_Food_Item(request):
                                         left join food_category on food_category.category_id = food_menu.item_category_id where food_status_id = '2'"))
    return json.dumps({"Return": "Record Retrived Successfully","ReturnCode": "RRS","Returnvalue":get_disable_item,"Status": "Success","StatusCode": "200"},indent = 4)
 
+def Add_Food_Offers(request):
+   
+      d = request.json
+      dish_id ,list1= '',[]
+      if d['food_id'] is None:
+         get_offers = json.loads(dbget("select * from food_menu where item_category_id = '"+str(d['category_id'])+"'"))
+         print("sucess")
+         for get_offer in get_offers:
+             list1.append(tuple((get_offer['food_id'],d['offer_value'],d['offer_type_id'],d['offer_status_id'])))
+             if len(dish_id) == 0:
+                dish_id = "'"+str(get_offer['food_id'])+"'"
+             else:
+                dish_id += ","+"'"+str(get_offer['food_id'])+"'"
+         #print(dish_id)
+         #print(list1)
+         dbput("delete from food_offers where food_id in ("+str(dish_id)+")")
+         values = ', '.join(map(str, list1))
+         dbput("INSERT INTO  food_offers (food_id, offer_value, offer_type_id, offer_status_id)VALUES {}".format(values))
+         
+    
+      else:
+         print("fada")
+         d = {k:v for k,v in d.items() if v is not None if k not in ('category_id')}
+         gensql('insert','food_offers',d)
+      '''
+      getcount  = json.loads(dbget("select count(*) from food_offers where food_id = '"+str(d['food_id'])+"'"))
+      
+      if getcount[0]['count'] != 0:
+         a = {k:v for k,v in d.items() if v is not None if k not in ('food_id')}
+         b = {k:v for k,v in d.items() if k in ('food_id')}
+         gensql('update','food_offers',a,b)
+         
+      else:
+         print("its OFFER INSERT inside")
+         d = {k:v for k,v in d.items() if v is not None}
+         gensql('insert','food_offers',d)
+      '''
+      return json.dumps({"Return": "Record Inserted Successfully","ReturnCode": "RIS","Status": "Success","StatusCode": "200"},indent = 4)
+def Update_Food_Offers(request):
+   d = request.json
+   dish_id ,list1= '',[]
+   if d['food_id'] is None:
+         get_offers = json.loads(dbget("select * from food_menu where item_category_id = '"+str(d['category_id'])+"'"))
+         print("sucess")
+         for get_offer in get_offers:
+             list1.append(tuple((get_offer['food_id'],d['offer_value'],d['offer_type_id'],d['offer_status_id'])))
+             if len(dish_id) == 0:
+                dish_id = "'"+str(get_offer['food_id'])+"'"
+             else:
+                dish_id += ","+"'"+str(get_offer['food_id'])+"'"
+         #print(dish_id)
+         #print(list1)
+         dbput("delete from food_offers where food_id in ("+str(dish_id)+")")
+         values = ', '.join(map(str, list1))
+         dbput("INSERT INTO  food_offers (food_id, offer_value, offer_type_id, offer_status_id)VALUES {}".format(values))
+         
+    
+   else:
+         print("fada")
+         a = {k:v for k,v in d.items() if v is not None if k not in ('food_id','category_id')}
+         b = {k:v for k,v in d.items() if k in ('food_id')}
+         gensql('update','food_offers',a,b)
+   return json.dumps({"Return": "Record Updated Successfully","ReturnCode": "RUS","Status": "Success","StatusCode": "200"},indent = 4)
+   
+def Select_Food_Offers(request):
+
+  get_food_offers = json.loads(dbget(" select food_category.category,food_menu.food_name,food_menu.price,food_menu.item_category_id,offer_type.offer_type,offer_status.offer_status,food_offers.* from food_offers\
+			 left join offer_type on offer_type.offer_type_id = food_offers.offer_type_id\
+			 left join offer_status on offer_status.offer_status_id = food_offers.offer_status_id\
+			left join food_menu on food_menu.food_id = food_offers.food_id\
+			 left join food_category on food_category.category_id = food_menu.item_category_id"))
+  return json.dumps({"Return": "Record Retrived Successfully","ReturnCode": "RRS","Returnvalue":get_food_offers,"Status": "Success","StatusCode": "200"},indent = 4)
