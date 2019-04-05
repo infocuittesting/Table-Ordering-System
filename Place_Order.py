@@ -6,23 +6,38 @@ def Place_Order(request):
     
     d = request.json
     print(d)
-    items = d['items']
+    unavailable_item = []
+    get_table_status = json.loads(dbget("select table_status_id from table_details where table_no="+str(d['table_no'])+""))
+    if get_table_status[0]['table_status_id'] != 3:
+        items = d['items']
 
-    orders = json.loads(dbget("select order_no from food_order where table_no="+str(d['table_no'])+" and order_status_id !=7"))
-    print(orders)
-    
-    order_no = json.loads(dbget("select uuid_generate_v4() as order_no"))[0]['order_no'] if len(orders) == 0 else orders[0]['order_no']
-    print(order_no)
-    
-    for item in items:
-        item.update({'order_no':order_no,'datetime':application_datetime(),'table_no':d['table_no']})
-        gensql('insert','food_order',item)
-    order_comments = {'order_no':order_no,'order_comments':d['comments'],'comments_time':item['datetime']}    
-    gensql('insert','order_comments',order_comments)
-    dbput("update table_details set table_status_id = '2' where table_no = "+str(d['table_no'])+"")
-    return json.dumps({"Return": "Record Inserted Successfully","ReturnCode": "RIS","Status": "Success","StatusCode": "200"},indent = 4)
-
-
+        orders = json.loads(dbget("select order_no from food_order where table_no="+str(d['table_no'])+" and order_status_id !=7"))
+        print(orders)
+        
+        order_no = json.loads(dbget("select uuid_generate_v4() as order_no"))[0]['order_no'] if len(orders) == 0 else orders[0]['order_no']
+        print(order_no)
+        
+        for item in items:
+            item.update({'order_no':order_no,'datetime':application_datetime(),'table_no':d['table_no']})
+            get_items = json.loads(dbget("select food_status_id,food_name from food_menu where food_id = '"+str(item['food_id'])+"' "))
+            if get_items[0]['food_status_id'] == 1:
+               gensql('insert','food_order',item)
+            else:
+                unavailable_item.append({"food_name":get_items[0]['food_name'],"food_id":item['food_id']})
+        if d['comments'] is not None:
+            order_comments = {'order_no':order_no,'order_comments':d['comments'],'comments_time':item['datetime']}
+           
+            gensql('insert','order_comments',order_comments)
+        else:
+            pass
+        dbput("update table_details set table_status_id = '2' where table_no = "+str(d['table_no'])+"")
+        if len(unavailable_item) == 0:
+          return json.dumps({"Return": "Record Inserted Successfully","ReturnCode": "RIS","Status": "Success","StatusCode": "200"},indent = 4)
+        else:
+          return json.dumps({"Return": "Items Not Avialble","ReturnCode": "INA","Unavailable_Items":unavailable_item,"Status": "Success","StatusCode": "200"},indent = 4)
+    else:
+       return json.dumps({"Return": "Coudn't Place Order","ReturnCode": "CNPO","Status": "Success","StatusCode": "200"},indent = 4)
+ 
 def Query_today_food_orders(request):
    st_time = time.time()
    today_orders = json.loads(dbget("select food_menu.food_name,food_category.*, food_order.*,\

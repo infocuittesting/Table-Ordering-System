@@ -8,6 +8,8 @@ CORS(TOS)
 from food_menus import *
 from Place_Order import *
 from Billing_Application import *
+from Tablet_Application import *
+from Sales_Closed import *
 #below i set path for web application
 
 @TOS.route("/",methods=['GET','POST'])
@@ -74,6 +76,20 @@ def billing_order_item():
 @TOS.route("/Update_Food_Order_Status_Item",methods=['POST'])
 def updatefooditem():
     return Update_Food_Order_Status_Item(request)
+@TOS.route("/Update_Category_Food_Menus",methods=['POST'])
+def editcategoryfoodmenus():
+    return Update_Category_Food_Menus(request)
+#----------------TABLET----------------------------------------------------
+@TOS.route("/Display_Food_Menus",methods=['GET','POST'])
+def activefoodmenus():
+    return Display_Food_Menus(request)
+@TOS.route("/Tablet_Login_And_Logout",methods=['POST'])
+def loginlogout():
+    return Tablet_Login_And_Logout(request)
+#------------sales closed-------------
+@TOS.route("/Sales_Closed",methods=['GET'])
+def salesclosed():
+    return Sales_Closed(request)
 
 	
 if __name__ == "__main__":

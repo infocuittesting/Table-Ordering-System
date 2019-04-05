@@ -24,7 +24,7 @@ def Add_food_menu(request):
        return json.dumps({"Return": "Record Inserted Successfully","ReturnCode": "RIS","Status": "Success","StatusCode": "200"},indent = 4)
    elif request.method =="GET":
        food_details,food_menu_details = [],[]
-       GET_FOOD_MENUS = json.loads(dbget("select food_offers.*,offer_status.offer_status,offer_type.offer_type,food_category.category,food_status.status, food_menu.* from food_menu\
+       GET_FOOD_MENUS = json.loads(dbget("select food_offers.*,offer_status.offer_status,offer_type.offer_type,food_category.*,food_status.status, food_menu.* from food_menu\
                                          left join food_category on food_category.category_id = food_menu.item_category_id \
                                          left join food_status on food_status.status_id = food_menu.food_status_id\
 				         left join food_offers on food_offers.food_id = food_menu.food_id\
@@ -34,7 +34,7 @@ def Add_food_menu(request):
        for food_menu in GET_FOOD_MENUS:
           if food_menu['category'] not in food_details:
              food_details.append(food_menu['category'])
-             food_menu_details.append({"categry_name":food_menu['category'],"item":[]})
+             food_menu_details.append({"categry_name":food_menu['category'],"category_img":food_menu['image_url'],"category_id":food_menu['category_id'],"item":[]})
        for food_menu in GET_FOOD_MENUS:
           for food_menu_detail in food_menu_details:
             
