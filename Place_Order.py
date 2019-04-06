@@ -24,7 +24,7 @@ def Place_Order(request):
                gensql('insert','food_order',item)
             else:
                 unavailable_item.append({"food_name":get_items[0]['food_name'],"food_id":item['food_id']})
-        if d['comments'] is not None:
+        if d['comments'] is not None or d['comments'] !="":
             order_comments = {'order_no':order_no,'order_comments':d['comments'],'comments_time':item['datetime']}
            
             gensql('insert','order_comments',order_comments)
