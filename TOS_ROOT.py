@@ -16,9 +16,9 @@ from Sales_Closed import *
 def mos_index():
     return "Hello TOS Manager"
 
-@TOS.route("/<string:name>",methods=['GET','POST'])
-def pass_param(name):
-    return (name)
+#@TOS.route("/<string:name>",methods=['GET','POST'])
+#def pass_param(name):
+   # return (name)
 
 #----------------CONFIGURATION---------------------
 @TOS.route("/Add_Food_Menu_Items",methods=['POST','GET'])
@@ -86,6 +86,9 @@ def activefoodmenus():
 @TOS.route("/Tablet_Login_And_Logout",methods=['POST'])
 def loginlogout():
     return Tablet_Login_And_Logout(request)
+@TOS.route("/Query_Extra_Item_Category",methods=['GET','POST'])
+def Extraitem():
+    return Query_Extra_Item_Category(request)
 #------------sales closed-------------
 @TOS.route("/Sales_Closed",methods=['GET'])
 def salesclosed():

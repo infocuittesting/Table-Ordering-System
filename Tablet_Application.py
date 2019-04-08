@@ -4,12 +4,10 @@ def Display_Food_Menus(request):
     
     
        food_details,food_menu_details = [],[]
-       GET_FOOD_MENUS = json.loads(dbget("select food_offers.*,offer_status.offer_status,offer_type.offer_type,food_category.*,food_status.status, food_menu.* from food_menu\
+       GET_FOOD_MENUS = json.loads(dbget("select food_type.*,food_category.*,food_status.status, food_menu.* from food_menu\
                                          left join food_category on food_category.category_id = food_menu.item_category_id \
                                          left join food_status on food_status.status_id = food_menu.food_status_id\
-				         left join food_offers on food_offers.food_id = food_menu.food_id\
-				         left join offer_status on offer_status.offer_status_id = food_offers.offer_status_id\
-				         left join offer_type on offer_type.offer_type_id = food_offers.offer_type_id where food_menu.food_status_id = 1"))
+                                         left join food_type on food_type.food_type_id = food_menu.food_type_id where food_menu.food_status_id = 1"))
        
        for food_menu in GET_FOOD_MENUS:
           if food_menu['category'] not in food_details:
@@ -48,4 +46,10 @@ def Tablet_Login_And_Logout(request):
       else:
            return json.dumps({"Return": "Login OR Password Incorrect","ReturnCode": "LOPI","Status": "Success","StatusCode": "200"},indent = 4)
   #return json.dumps({"Return": "LogOut Successfully","ReturnCode": "LS","Status": "Success","StatusCode": "200"},indent = 4)
-          
+def Query_Extra_Item_Category(request):
+       get_extra_item = json.loads(dbget("select food_type.*,food_category.*,food_status.status, food_menu.* from food_menu\
+                                         left join food_category on food_category.category_id = food_menu.item_category_id \
+                                         left join food_status on food_status.status_id = food_menu.food_status_id\
+                                         left join food_type on food_type.food_type_id = food_menu.food_type_id where food_menu.food_status_id = 1 and food_category.category_id = 7"))
+       
+       return json.dumps({"Return": "Record Retrived Successfully","ReturnCode": "RRS","Returnvalue":get_extra_item,"Status": "Success","StatusCode": "200"},indent = 4)  
