@@ -1,5 +1,6 @@
 from sqlwrapper import *
 import base64
+from collections import Counter
 def Display_Food_Menus(request):
     
     
@@ -8,7 +9,7 @@ def Display_Food_Menus(request):
                                          left join food_category on food_category.category_id = food_menu.item_category_id \
                                          left join food_status on food_status.status_id = food_menu.food_status_id\
                                          left join food_type on food_type.food_type_id = food_menu.food_type_id where food_menu.food_status_id = 1"))
-       
+       #get_best_sellers = json.loads(dbget(""))
        for food_menu in GET_FOOD_MENUS:
           if food_menu['category'] not in food_details:
              food_details.append(food_menu['category'])
@@ -19,6 +20,28 @@ def Display_Food_Menus(request):
              if food_menu['category'] ==food_menu_detail['categry_name']:
                 food_menu['item_images'] = [{"item_image":food_menu['food_id_url']}]
                 food_menu_detail["item"].append(food_menu)
+       get_best_sellers= json.loads(dbget("select food_category.category_id,food_category.category,food_category.image_url,food_menu.food_name,food_menu.price,food_menu.food_id_url,\
+                                           food_type.food_type_id,food_type.food_type,food_status.status,\
+                                           food_order_history.food_id,count(*) from food_order_history \
+                                           left join food_menu on food_menu.food_id = food_order_history.food_id\
+                                           left join food_category on food_category.category_id= food_menu.item_category_id\
+                                           left join food_type on food_type.food_type_id = food_menu.food_type_id\
+                                           left join food_status on food_status.status_id = food_menu.food_status_id\
+                                           group by food_order_history.food_id,food_category.category_id,food_menu.food_name,food_name,food_menu.price,food_menu.food_id_url,\
+                                           food_category.category,\
+                                           food_type.food_type_id,food_type.food_type,food_category.image_url,food_status.status\
+                                           order by count desc"))
+       k = [x['category'] for x in get_best_sellers]
+
+       new_vals=[]
+
+       for i in Counter(k):
+           all_values = [x for x in get_best_sellers if x['category']==i]
+           #all_values['']
+           #print("all",all_values)
+           new_vals.append(max(all_values, key=lambda x: x['count']))
+       
+       food_menu_details.append({"categry_name":"Best Sellers","category_img":"https://s3.amazonaws.com/image-upload-rekognition/tosfoodimages/20190406130327.png","item":new_vals})
        return json.dumps({"Return": "Record Retrived Successfully","ReturnCode": "RRS","Returnvalue":food_menu_details,"Status": "Success","StatusCode": "200"},indent = 4)
 def Tablet_Login_And_Logout(request):
    d = request.json
