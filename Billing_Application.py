@@ -13,7 +13,7 @@ def Query_Table_Status(request):
 
 def Update_Food_Order_Status_Item(request):
     d = request.json
-    s = {'order_status_id' : 6}
+    s = {'order_status_id' : d['order_status_id']}
     gensql('update','food_order',s,d)
     return json.dumps({"Return": "Record Updated Successfully","ReturnCode": "RUS","Status": "Success","StatusCode": "200"},indent = 4)
 
@@ -88,3 +88,9 @@ def Update_Category_Food_Menus(request):
   d = request.json
   dbput("update food_menu set food_status_id = '"+str(d['food_status_id'])+"' where item_category_id = '"+str(d['item_category_id'])+"'")
   return json.dumps({"Return": "Record Updated Successfully","ReturnCode": "RUS","Status": "Success","StatusCode": "200"},indent = 4)
+
+
+def Send_Alert_to_waiter_food_items_closed(request):
+    d = request.json
+    return json.dumps({"Table_no":d['table_no'],"Description": "Food Items Completed","Status": "Success","StatusCode": "200"},indent = 4)
+

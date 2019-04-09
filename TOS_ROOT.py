@@ -79,6 +79,9 @@ def updatefooditem():
 @TOS.route("/Update_Category_Food_Menus",methods=['POST'])
 def editcategoryfoodmenus():
     return Update_Category_Food_Menus(request)
+@TOS.route("/Send_Alert_to_waiter_food_items_closed",methods=['POST'])
+def alertsend():
+    return Send_Alert_to_waiter_food_items_closed(request)
 #----------------TABLET----------------------------------------------------
 @TOS.route("/Display_Food_Menus",methods=['GET','POST'])
 def activefoodmenus():
