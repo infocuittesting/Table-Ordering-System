@@ -7,15 +7,16 @@ def Add_food_menu(request):
        d['food_name'] = d['food_name'].title()
        
        d['food_id'] = json.loads(dbget("select uuid_generate_v4() as order_no"))[0]['order_no']
+       r = requests.post("https://cktab4aq0h.execute-api.us-east-1.amazonaws.com/tosimageupload",json={"base64":d['food_id_url']})
+       data = r.json()
+       d['food_id_url'] = data['body']['url']
        d = {k:v for k,v in d.items() if v != ''  if v is not None if k  not in ('image_url')}
        if d['item_category_id'].isdigit():
-           r = requests.post("https://cktab4aq0h.execute-api.us-east-1.amazonaws.com/tosimageupload",json={"base64":d['food_id_url']})
-           data = r.json()
-           d['food_id_url'] = data['body']['url']
+           
            gensql('insert','food_menu',d)
        
        else:
-           if d['image_url'] != "":
+           if d['image_url'] != '':
               get_url = requests.post("https://cktab4aq0h.execute-api.us-east-1.amazonaws.com/tosimageupload",json={"base64":d['image_url']})
               datas = get_url.json()
               s['image_url'] = datas['body']['url']
