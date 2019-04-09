@@ -27,6 +27,7 @@ def Display_Food_Menus(request):
                                            left join food_category on food_category.category_id= food_menu.item_category_id\
                                            left join food_type on food_type.food_type_id = food_menu.food_type_id\
                                            left join food_status on food_status.status_id = food_menu.food_status_id\
+                                           where food_menu.food_status_id = 1 \
                                            group by food_order_history.food_id,food_category.category_id,food_menu.food_name,food_name,food_menu.price,food_menu.food_id_url,\
                                            food_category.category,\
                                            food_type.food_type_id,food_type.food_type,food_category.image_url,food_status.status\
@@ -40,9 +41,18 @@ def Display_Food_Menus(request):
            #all_values['']
            #print("all",all_values)
            new_vals.append(max(all_values, key=lambda x: x['count']))
-       
-       food_menu_details.append({"categry_name":"Best Sellers","category_img":"https://s3.amazonaws.com/image-upload-rekognition/tosfoodimages/20190406130327.png","item":new_vals})
-       return json.dumps({"Return": "Record Retrived Successfully","ReturnCode": "RRS","Returnvalue":food_menu_details,"Status": "Success","StatusCode": "200"},indent = 4)
+       get_offers_menu = json.loads(dbget("select food_type.*,food_category.*,food_status.status, food_menu.* from food_menu \
+                                         left join food_category on food_category.category_id = food_menu.item_category_id \
+                                         left join food_status on food_status.status_id = food_menu.food_status_id \
+                                         left join food_type on food_type.food_type_id = food_menu.food_type_id \
+										where food_menu.food_status_id = 1 and offer_value != 0"))
+       final_get_offers_menu = [dict(item, item_image=[dict(image_url=item['food_id_url'])]) for item in get_offers_menu]
+       final_get_best_sellers_menu = [dict(item, item_image=[dict(image_url=item['food_id_url'])]) for item in new_vals]
+             
+       final_food_menu = [{"Food_Category":food_menu_details,"Offers":final_get_offers_menu,"Best_Sellers":final_get_best_sellers_menu}]
+       #final_food_menu['Food_Category'] = [food_menu_details]
+       #final_food_menu['Best_Sellers'] = [{"categry_name":"Best Sellers","category_img":"https://s3.amazonaws.com/image-upload-rekognition/tosfoodimages/20190406130327.png","item":new_vals}]
+       return json.dumps({"Return": "Record Retrived Successfully","ReturnCode": "RRS","Returnvalue":final_food_menu,"Status": "Success","StatusCode": "200"},indent = 4)
 def Tablet_Login_And_Logout(request):
    d = request.json
    get_password = json.loads(dbget("select * from table_details where table_no = '"+str(d['table_no'])+"'"))
