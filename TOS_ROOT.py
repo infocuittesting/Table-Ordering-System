@@ -10,6 +10,7 @@ from Place_Order import *
 from Billing_Application import *
 from Tablet_Application import *
 from Sales_Closed import *
+from Report import *
 #below i set path for web application
 
 @TOS.route("/",methods=['GET','POST'])
@@ -96,7 +97,10 @@ def Extraitem():
 @TOS.route("/Sales_Closed",methods=['GET'])
 def salesclosed():
     return Sales_Closed(request)
-
+#--------------Report-----------------------------
+@TOS.route("/Report_Service",methods=['POST'])
+def get_reportd():
+    return Report_Service(request)
 	
 if __name__ == "__main__":
     TOS.run(host ='192.168.99.1',port =5000)#run web application
