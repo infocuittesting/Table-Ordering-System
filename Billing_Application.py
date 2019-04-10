@@ -35,7 +35,8 @@ def Update_ReadyforPayment_Status(request):
     s = {'table_status_id' : 3,'payment_type_id':d['payment_type_id']}
     
     gensql('update','table_details',s,e)
-    dbput("update order_timings set bill_request_time = '"+str(application_datetime())+"' where order_no = '"+str(d['order_no'])+"'")
+    get_order_no = json.loads(dbget("select order_no from food_order where order_status_id != 7 and table_no = '"+str(d['table_no'])+"' "))
+    dbput("update order_timings set bill_request_time = '"+str(application_datetime())+"' where order_no = '"+str(get_order_no[0]['order_no'])+"'")
     
     return json.dumps({"Return": "Record Updated Successfully","ReturnCode": "RUS","Status": "Success","StatusCode": "200"},indent = 4)
 

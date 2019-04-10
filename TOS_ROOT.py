@@ -101,6 +101,12 @@ def salesclosed():
 @TOS.route("/Report_Service",methods=['POST'])
 def get_reportd():
     return Report_Service(request)
+@TOS.route("/Categories_Basis_Report",methods=['POST'])
+def category_base_report():
+    return Categories_Basis_Report(request)
+@TOS.route("/Insert_Feedback",methods=['POST'])
+def insertfeedback():
+    return Insert_Feedback(request)
 	
 if __name__ == "__main__":
     TOS.run(host ='192.168.99.1',port =5000)#run web application
