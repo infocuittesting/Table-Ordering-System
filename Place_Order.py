@@ -72,10 +72,8 @@ def Query_today_food_orders(request):
        total_orders.append({'table_no':table,'order_no':order_no,'all_items':all_category,'commenst':comments})
    order_status_count = json.loads(dbget("select count(*) as order_status_count from food_order where order_status_id=5 \
                                          group by order_status_id"))
-   if len(order_status_count) == 0:
-        order_count1 = 0
-   else:     
-        order_count1 = order_status_count[0]['order_status_count']
+   
+   order_count1 = order_status_count[0]['order_status_count'] if len(order_status_count) != 0 else 0
    ed_time = time.time()
    full_time = ed_time - st_time
    print("Time Taken", full_time)

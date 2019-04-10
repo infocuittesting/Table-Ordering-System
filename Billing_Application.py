@@ -4,7 +4,7 @@ def Query_Table_Status(request):
     get_table_details = json.loads(dbget("select login_status.login_status,payment_type.*,table_status.table_status, table_details.* from table_details\
 	left join table_status on table_status.table_status_id = table_details.table_status_id\
 	left join login_status on login_status.login_status_id = table_details.login_status_id\
-	left join payment_type on payment_type.payment_type_id = table_details.payment_type_id"))
+	left join payment_type on payment_type.payment_type_id = table_details.payment_type_id order by table_no"))
     available_count = len(list(filter(lambda i: i['table_status'] == 'AVAILABLE', get_table_details)))
     unavailable_count =len(list(filter(lambda i: i['table_status'] == 'UN AVAILABLE', get_table_details)))
     payment_count = len(list(filter(lambda i: i['payment_type'] != 'NOPE', get_table_details)))
@@ -13,8 +13,8 @@ def Query_Table_Status(request):
 
 def Update_Food_Order_Status_Item(request):
     d = request.json
-    s = {'order_status_id' : d['order_status_id']}
-    gensql('update','food_order',s,d)
+
+    dbput("update food_order set order_status_id = '"+str(d['order_status_id'])+"' where order_details_id = '"+str(d['order_details_id'])+"'")
     return json.dumps({"Return": "Record Updated Successfully","ReturnCode": "RUS","Status": "Success","StatusCode": "200"},indent = 4)
 
 def Update_Order_Status(request):
