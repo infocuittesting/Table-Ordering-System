@@ -71,10 +71,14 @@ def Query_today_food_orders(request):
        comments = json.loads(dbget("select * from public.order_comments where order_no='"+order_no+"' order by comments_time "))
        total_orders.append({'table_no':table,'order_no':order_no,'all_items':all_category,'commenst':comments})
    order_status_count = json.loads(dbget("select count(*) as order_status_count from food_order where order_status_id=5 \
-                                         group by order_status_id"))    
+                                         group by order_status_id"))
+   if len(order_status_count) == 0:
+        order_count1 = 0
+   else:     
+        order_count1 = order_status_count[0]['order_status_count']
    ed_time = time.time()
    full_time = ed_time - st_time
    print("Time Taken", full_time)
    return json.dumps({"Return": "Record Retrived Successfully","ReturnCode": "RRS","Returnvalue":total_orders,
-                      "order_status_count":order_status_count[0]['order_status_count']},indent=2)
+                      "order_status_count":order_count1},indent=2)
 
