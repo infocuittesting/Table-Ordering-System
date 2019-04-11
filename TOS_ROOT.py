@@ -46,6 +46,9 @@ def updateoffers():
 @TOS.route("/Select_Food_Offers",methods=['POST','GET'])
 def selectoffers():
     return Select_Food_Offers(request)
+@TOS.route("/Select_Food_Type",methods=['GET'])
+def selectfoodtype():
+    return Select_Food_Type(request)
 #-------------PLACE ORDER-------------------------------------------
 @TOS.route("/Choose_Food_Order",methods=['POST'])
 def placeorder():

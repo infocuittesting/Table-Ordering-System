@@ -142,3 +142,6 @@ def Select_Food_Offers(request):
 			left join food_menu on food_menu.food_id = food_offers.food_id\
 			 left join food_category on food_category.category_id = food_menu.item_category_id"))
   return json.dumps({"Return": "Record Retrived Successfully","ReturnCode": "RRS","Returnvalue":get_food_offers,"Status": "Success","StatusCode": "200"},indent = 4)
+def Select_Food_Type(request):
+   get_food_type = json.loads(dbget("select * from food_type"))
+   return json.dumps({"Return": "Record Retrived Successfully","ReturnCode": "RRS","Returnvalue":get_food_type,"Status": "Success","StatusCode": "200"},indent = 4)
