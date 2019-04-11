@@ -91,7 +91,41 @@ def Update_Category_Food_Menus(request):
   return json.dumps({"Return": "Record Updated Successfully","ReturnCode": "RUS","Status": "Success","StatusCode": "200"},indent = 4)
 
 
-def Send_Alert_to_waiter_food_items_closed(request):
+def Update_Notification_Status(request):
     d = request.json
-    return json.dumps({"Table_no":d['table_no'],"Description": "Food Items Completed","Status": "Success","StatusCode": "200"},indent = 4)
+    #values = ','.join("'{0}'".format(x) for x in d['order_details_id'])
+    values = ', '.join(map(str, d['order_details_id']))
+    print(values)
+    if d['notification_status_id'] == 2:
+        
+        dbput("update food_order set notification_status_id='"+str(d['notification_status_id'])+"',\
+              notification_time='"+str(application_datetime().strftime("%Y-%m-%d %H:%M:%S"))+"' where order_details_id in ("+values+")")
+    else:
+      dbput("update food_order set notification_status_id='"+str(d['notification_status_id'])+"' where order_details_id in ("+values+")")
+    return json.dumps({"Return": "Record Updated Successfully","ReturnCode": "RUS","Status": "Success","StatusCode": "200"},indent = 4)
+def Query_Notification_Food_Items(request):
+    notify_time,final_results,table_no = [],[],[]
+    get_notifications = json.loads(dbget("select notification_status,notification_time, food_order.*,food_menu.food_name from food_order\
+	left join food_menu on food_menu.food_id =food_order.food_id \
+	left join notification_status on notification_status.notification_status_id = food_order.notification_status_id\
+	where order_status_id =6 and food_order.notification_status_id  =2\
+	order by food_order.notification_time"))
+    for get_notification in get_notifications:
+          if get_notification['notification_time'] not in notify_time:
+             notify_time.append(get_notification['notification_time'])
+             final_results.append({"notification_time":get_notification['notification_time'],"table_records":[]})
+     
+    for get_notification in get_notifications:
+        for final_result in final_results:
+         if get_notification['notification_time'] == final_result['notification_time']:
+           if not any(d['table_no'] == get_notification['table_no'] for d in final_result['table_records']):
+             final_result['table_records'].append({"table_no":get_notification['table_no'],"items":[]})
+             
+    for get_notification in get_notifications:
+       for final_result in final_results:
 
+               if get_notification['notification_time'] == final_result['notification_time']:
+                 for d in final_result['table_records']:
+                  if   d['table_no'] == get_notification['table_no']:
+                      d['items'].append(get_notification)
+    return json.dumps({"Return": "Record Retrived Successfully","ReturnCode": "RRS","Returnvalue":final_results,"Status": "Success","StatusCode": "200"},indent = 4)

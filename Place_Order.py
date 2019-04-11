@@ -22,7 +22,7 @@ def Place_Order(request):
             print(order_no)
             
             for item in items_value:
-                item.update({'order_no':order_no,'datetime':application_datetime(),'table_no':d['table_no']})
+                item.update({'order_no':order_no,'notification_status_id':3,'datetime':application_datetime(),'table_no':d['table_no']})
                 get_items = json.loads(dbget("select food_status_id,food_name from food_menu where food_id = '"+str(item['food_id'])+"' "))
                 if get_items[0]['food_status_id'] == 1:
                    gensql('insert','food_order',item)
