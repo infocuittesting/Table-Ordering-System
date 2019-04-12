@@ -68,29 +68,41 @@ def Get_Order_Item_Table(request):
     where food_order.table_no = '"+str(d['table_no'])+"' and food_order.order_status_id != 7 \
     and food_menu.item_category_id!=7 order by datetime"))
 
-   total_amount = json.loads(dbget("select sum((food_menu.price*quantity)-(food_menu.offer_value*food_order.quantity)) as total from food_order \
-                                   left join food_menu on food_menu.food_id = food_order.food_id \
-                                   and food_order.order_status_id != 7 \
-                                   and food_menu.item_category_id!=7 \
-                                   where food_order.table_no =  '"+str(d['table_no'])+"'"))
-   print(total_amount)
+   
+   #print(total_amount)
+   c = defaultdict(int)
+   for d in get_orders:
+    #print(c)
+    c[d['food_name']] += (d['price']*d['quantity'])
+    #c[d['food_name']] += d['quantity']
+   #print(c)
+   finals = [{'food_name': food_name, 'total_price': price} for food_name, price in c.items()]
+
+   #print(finals)
+
+   z = defaultdict(int)
+   for s in get_orders:
+     z[s['food_name']] += s['quantity']
+   finals_value = [{'Names': food_name, 'quantity': quantity} for food_name, quantity in z.items()]
+   for final in finals:
+    for finals_va in finals_value:
+        if final['food_name'] == finals_va['Names']:
+            final['quantity'] = finals_va['quantity']
+   
+
+   #finals = [ dict(final,price = x['price'])    for x in get_orders  for final in finals if final['food_name'] == x['food_name'] ]
    if len(get_orders) != 0 :
+    sub_total = sum([x['total_price'] for x in finals])
+    offer_value = sum([x['offer_value']*x['quantity'] for x in get_orders])
     food_menu_details = {"table_no":d['table_no'],"order_no":get_orders[0]['order_no'],
-                         "items":get_orders,'total_amount':"{0:.2f}".format(total_amount[0]['total']),"total_items":len(get_orders),"sub_total":sum([x['price']*x['quantity'] for x in get_orders]),"total_offers":sum([x['offer_value']*x['quantity'] for x in get_orders])}
+                         "items":finals,'total_amount':"{0:.2f}".format(sub_total-offer_value),"total_items":len(finals),"sub_total":sub_total,"total_offers":offer_value}
 
    else:
     food_menu_details = {"table_no":d['table_no'],"order_no":0,
-                         "items":get_orders,'total_amount':0,"total_items":0,"sub_total":0}
+                         "items":get_orders,'total_amount':0,"total_items":0,"sub_total":0,"total_offers":0}
 
    return(json.dumps({"Return": "Record Retrived Successfully","ReturnCode": "RRS",
                       "Returnvalue":food_menu_details,"Status": "Success","StatusCode": "200"},indent = 4))  
-def Update_Category_Food_Menus(request):
-    
-  d = request.json
-  dbput("update food_menu set food_status_id = '"+str(d['food_status_id'])+"' where item_category_id = '"+str(d['item_category_id'])+"'")
-  return json.dumps({"Return": "Record Updated Successfully","ReturnCode": "RUS","Status": "Success","StatusCode": "200"},indent = 4)
-
-
 def Update_Notification_Status(request):
     d = request.json
     #values = ','.join("'{0}'".format(x) for x in d['order_details_id'])
