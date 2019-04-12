@@ -7,14 +7,22 @@ def Place_Order(request):
     d = request.json
     #print(d)
     items_value = d['items']
-    list1 = []
-    check_item = tuple(''+str(item_va['food_id'])+'' for item_va in items_value)
-    
+    list1,list2 = [],[]
+    check_item = ""
+    for item_va in items_value:
+        if len(check_item) ==0:
+           check_item = "'"+item_va['food_id']+"'"
+           list2.append(check_item)
+         
+        else:
+            check_item +=","+ "'"+item_va['food_id']+"'"
+            list2.append(check_item)
+         
     get_table_status = json.loads(dbget("select table_status_id from table_details where table_no="+str(d['table_no'])+""))
     if get_table_status[0]['table_status_id'] != 3:
         
-        get_item_status = json.loads(dbget("select count(*) from food_menu where food_id in "+str(check_item)+" and food_status_id = 1"))
-        if get_item_status[0]['count'] == len(check_item):
+        get_item_status = json.loads(dbget("select count(*) from food_menu where food_id in ("+str(check_item)+") and food_status_id = 1"))
+        if get_item_status[0]['count'] == len(list2):
             orders = json.loads(dbget("select order_no from food_order where table_no="+str(d['table_no'])+" and order_status_id !=7"))
             print(orders)
             
@@ -47,7 +55,7 @@ def Place_Order(request):
             
             return json.dumps({"Return": "Record Inserted Successfully","ReturnCode": "RIS","Status": "Success","StatusCode": "200"},indent = 4)
         else:
-          return json.dumps({"Return": "Items Not Avialble","ReturnCode": "INA","Unavailable_Items":unavailable_item,"Status": "Success","StatusCode": "200"},indent = 4)
+          return json.dumps({"Return": "Items Not Avialble","ReturnCode": "INA","Status": "Success","StatusCode": "200"},indent = 4)
     else:
        return json.dumps({"Return": "Coudn't Place Order","ReturnCode": "CNPO","Status": "Success","StatusCode": "200"},indent = 4)
  
