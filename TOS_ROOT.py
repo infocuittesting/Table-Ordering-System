@@ -60,7 +60,9 @@ def todayorders():
 @TOS.route("/Query_food_orders",methods=['POST'])
 def getorders():
     return Query_food_orders(request)
-
+@TOS.route("/Query_food_orders_waiter",methods=['POST','GET'])
+def orderstowaiter():
+   return Query_food_orders_waiter(request)
 #----------------Billing-----------------------------------------------
 @TOS.route("/Query_Table_Status",methods=['GET'])
 def tablestatus():

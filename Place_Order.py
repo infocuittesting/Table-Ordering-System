@@ -60,7 +60,7 @@ def Query_today_food_orders(request):
                                    left join order_status on order_status.order_status_id = \
                                    food_order.order_status_id join notification_status on\
                                    food_order.notification_status_id = notification_status.notification_status_id \
-                                   where food_order.order_status_id!=7 \
+                                   where food_order.order_status_id!=7 and food_menu.item_category_id!=7 \
                                    order by datetime"))
    #print(today_orders)
    tables = list(set(order['table_no'] for order in today_orders))
@@ -85,3 +85,39 @@ def Query_today_food_orders(request):
    return json.dumps({"Return": "Record Retrived Successfully","ReturnCode": "RRS","Returnvalue":total_orders,
                       "order_status_count":order_count1},indent=2)
 
+
+def Query_food_orders_waiter(request):
+   st_time = time.time()
+   today_orders = json.loads(dbget("select food_menu.food_name,food_category.*, food_order.*,\
+                                  order_status.order_status_desc,notification_status.* from food_order\
+                                   left join food_menu on food_menu.food_id = food_order.food_id\
+                                   left join food_category on food_category.category_id =food_menu.item_category_id\
+                                   left join order_status on order_status.order_status_id = \
+                                   food_order.order_status_id join notification_status on\
+                                   food_order.notification_status_id = notification_status.notification_status_id \
+                                   where food_order.order_status_id!=7 \
+                                   order by datetime"))
+   # print(today_orders)
+   tables = list(set(order['table_no'] for order in today_orders))
+   print("tables", tables)
+   total_orders = []
+   for table in tables:
+       all_category = []
+       all_table_orders = [order for order in today_orders if order['table_no'] == table]
+       category_type = list(set([table_order['category'] for table_order in all_table_orders]))
+       for category in category_type:
+           all_category.append({'category': category, 'items': [tab_order for tab_order in all_table_orders if
+                                                                tab_order['category'] == category]})
+       order_no = all_table_orders[0]['order_no']
+       comments = json.loads(
+           dbget("select * from public.order_comments where order_no='" + order_no + "' order by comments_time "))
+       total_orders.append({'table_no': table, 'order_no': order_no, 'all_items': all_category, 'commenst': comments})
+   order_status_count = json.loads(dbget("select count(*) as order_status_count from food_order where order_status_id=5 \
+                                        group by order_status_id"))
+
+   order_count1 = order_status_count[0]['order_status_count'] if len(order_status_count) != 0 else 0
+   ed_time = time.time()
+   full_time = ed_time - st_time
+   print("Time Taken", full_time)
+   return json.dumps({"Return": "Record Retrived Successfully", "ReturnCode": "RRS", "Returnvalue": total_orders,
+                      "order_status_count": order_count1}, indent=2)
