@@ -8,7 +8,7 @@ def Display_Food_Menus(request):
        GET_FOOD_MENUS = json.loads(dbget("select food_type.*,food_category.*,food_status.status, food_menu.* from food_menu\
                                          left join food_category on food_category.category_id = food_menu.item_category_id \
                                          left join food_status on food_status.status_id = food_menu.food_status_id\
-                                         left join food_type on food_type.food_type_id = food_menu.food_type_id where food_menu.food_status_id = 1"))
+                                         left join food_type on food_type.food_type_id = food_menu.food_type_id where food_menu.food_status_id = 1 and food_category.category_id !=7 "))
        #get_best_sellers = json.loads(dbget(""))
        for food_menu in GET_FOOD_MENUS:
           if food_menu['category'] not in food_details:

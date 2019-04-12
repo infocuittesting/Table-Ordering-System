@@ -76,11 +76,11 @@ def Get_Order_Item_Table(request):
    print(total_amount)
    if len(get_orders) != 0 :
     food_menu_details = {"table_no":d['table_no'],"order_no":get_orders[0]['order_no'],
-                         "items":get_orders,'total_amount':"{0:.2f}".format(total_amount[0]['total'])}
+                         "items":get_orders,'total_amount':"{0:.2f}".format(total_amount[0]['total']),"total_items":len(get_orders),"sub_total":sum([x['price']*x['quantity'] for x in get_orders]),"total_offers":sum([x['offer_value']*x['quantity'] for x in get_orders])}
 
    else:
     food_menu_details = {"table_no":d['table_no'],"order_no":0,
-                         "items":get_orders,'total_amount':0}
+                         "items":get_orders,'total_amount':0,"total_items":0,"sub_total":0}
 
    return(json.dumps({"Return": "Record Retrived Successfully","ReturnCode": "RRS",
                       "Returnvalue":food_menu_details,"Status": "Success","StatusCode": "200"},indent = 4))  

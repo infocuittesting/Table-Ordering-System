@@ -37,7 +37,7 @@ def Place_Order(request):
                 gensql('insert','order_timings',maintain_time)
             except:
                 pass
-            if d['comments'] is not None:
+            if len(d['comments'])!=0:
                 order_comments = {'order_no':order_no,'order_comments':d['comments'],'comments_time':application_datetime()}
                
                 gensql('insert','order_comments',order_comments)
