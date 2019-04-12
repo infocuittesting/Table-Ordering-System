@@ -1,5 +1,6 @@
 from sqlwrapper import *
 from Fetch_Current_Datetime import *
+from collections import defaultdict
 def Query_Table_Status(request):
     get_table_details = json.loads(dbget("select login_status.login_status,payment_type.*,table_status.table_status, table_details.* from table_details\
 	left join table_status on table_status.table_status_id = table_details.table_status_id\
@@ -95,7 +96,8 @@ def Get_Order_Item_Table(request):
     sub_total = sum([x['total_price'] for x in finals])
     offer_value = sum([x['offer_value']*x['quantity'] for x in get_orders])
     food_menu_details = {"table_no":d['table_no'],"order_no":get_orders[0]['order_no'],
-                         "items":finals,'total_amount':"{0:.2f}".format(sub_total-offer_value),"total_items":len(finals),"sub_total":sub_total,"total_offers":offer_value}
+                         "items":finals,'grand_total':"{0:.2f}".format((sub_total+((sub_total*12)/100)-offer_value)),
+                         "GST_Amount":"{0:.2f}".format((sub_total*12)/100),"total_items":len(finals),"sub_total":sub_total,"total_offers":offer_value}
 
    else:
     food_menu_details = {"table_no":d['table_no'],"order_no":0,
