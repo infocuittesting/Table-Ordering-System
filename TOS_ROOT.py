@@ -46,9 +46,7 @@ def updateoffers():
 @TOS.route("/Select_Food_Offers",methods=['POST','GET'])
 def selectoffers():
     return Select_Food_Offers(request)
-@TOS.route("/Select_Food_Type",methods=['GET'])
-def selectfoodtype():
-    return Select_Food_Type(request)
+
 #-------------PLACE ORDER-------------------------------------------
 @TOS.route("/Choose_Food_Order",methods=['POST'])
 def placeorder():
@@ -57,9 +55,7 @@ def placeorder():
 def todayorders():
     return Query_today_food_orders(request)
 
-@TOS.route("/Query_food_orders",methods=['POST'])
-def getorders():
-    return Query_food_orders(request)
+
 @TOS.route("/Query_food_orders_waiter",methods=['POST','GET'])
 def orderstowaiter():
    return Query_food_orders_waiter(request)
@@ -82,9 +78,7 @@ def billing_order_item():
 @TOS.route("/Update_Food_Order_Status_Item",methods=['POST'])
 def updatefooditem():
     return Update_Food_Order_Status_Item(request)
-@TOS.route("/Update_Category_Food_Menus",methods=['POST'])
-def editcategoryfoodmenus():
-    return Update_Category_Food_Menus(request)
+
 @TOS.route("/Update_Notification_Status",methods=['POST'])
 def alertsend():
     return Update_Notification_Status(request)
@@ -115,6 +109,13 @@ def category_base_report():
 @TOS.route("/Insert_Feedback",methods=['POST'])
 def insertfeedback():
     return Insert_Feedback(request)
+
+@TOS.errorhandler(404)
+def unhandled_exception(e):
+   return(json.dumps({"Return":"page Not Found","Returncode":"404"}))
+@TOS.errorhandler(405)
+def unhandled_exception(e):
+ return(json.dumps({"Return":"Method Not Allowed","Returncode":"405"}))
 	
 if __name__ == "__main__":
     TOS.run(host ='192.168.99.1',port =5000)#run web application

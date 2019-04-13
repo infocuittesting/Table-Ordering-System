@@ -45,7 +45,8 @@ def Display_Food_Menus(request):
                                          left join food_category on food_category.category_id = food_menu.item_category_id \
                                          left join food_status on food_status.status_id = food_menu.food_status_id \
                                          left join food_type on food_type.food_type_id = food_menu.food_type_id \
-										where food_menu.food_status_id = 1 and offer_value != 0"))
+				         where food_menu.food_status_id = 1 and offer_value != 0"))
+       
        final_get_offers_menu = [dict(item, item_image=[dict(image_url=item['food_id_url'])]) for item in get_offers_menu]
        final_get_best_sellers_menu = [dict(item, item_image=[dict(image_url=item['food_id_url'])]) for item in new_vals]
              
@@ -55,14 +56,17 @@ def Display_Food_Menus(request):
        return json.dumps({"Return": "Record Retrived Successfully","ReturnCode": "RRS","Returnvalue":final_food_menu,"Status": "Success","StatusCode": "200"},indent = 4)
 def Tablet_Login_And_Logout(request):
    d = request.json
-   get_password = json.loads(dbget("select * from table_details where table_no = '"+str(d['table_no'])+"'"))
-   print(get_password)
-   
-   str_to_bype = get_password[0]['table_password'].encode("utf-8")
-   print("str_to_bype",str_to_bype,type(str_to_bype))
+   try:
+          get_password = json.loads(dbget("select * from table_details where table_no = '"+str(d['table_no'])+"'"))
+          print(get_password)
+          
+          str_to_bype = get_password[0]['table_password'].encode("utf-8")
+          print("str_to_bype",str_to_bype,type(str_to_bype))
 
-   output = (base64.b64decode(str_to_bype)).decode()
-   print('output samae as input',output,type(output))
+          output = (base64.b64decode(str_to_bype)).decode()
+          print('output samae as input',output,type(output))
+   except:
+          return json.dumps({"Return":"Table Number Data Not Exist","ReturnCode":"TNDNE"})
    if d['login_status_id'] == 1:
        if output == d['password']:
            dbput("update table_details set login_status_id = '"+str(d['login_status_id'])+"'")

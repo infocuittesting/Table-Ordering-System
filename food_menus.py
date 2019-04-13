@@ -7,6 +7,7 @@ def Add_food_menu(request):
        
        d['food_name'] = d['food_name'].title()
        d['food_id'] = json.loads(dbget("select uuid_generate_v4() as order_no"))[0]['order_no']
+       #Base 64 to Image
        if len(d['food_id_url']) != 0:
           
           r = requests.post("https://cktab4aq0h.execute-api.us-east-1.amazonaws.com/tosimageupload",json={"base64":d['food_id_url']})
@@ -14,8 +15,10 @@ def Add_food_menu(request):
           d['food_id_url'] = data['body']['url']
        d = {k:v for k,v in d.items() if v != ''  if v is not None if k  not in ('image_url')}
        if d['item_category_id'].isdigit():
-           
-           gensql('insert','food_menu',d)
+           try:
+              gensql('insert','food_menu',d)
+           except:
+              return json.dumps({"Return":"Duplicate Key Error or Value Error","ReturnCode":"DKEOV"},indent=2)
        
        else:
            if len(d['image_url']) != 0:
@@ -23,12 +26,14 @@ def Add_food_menu(request):
               datas = get_url.json()
               s['image_url'] = datas['body']['url']
            s['category'] = d['item_category_id'].upper()
-           
-           gensql('insert','food_category',s)
-           d['item_category_id'] = (json.loads(dbget("select * from food_category where category = '"+str(s['category'])+"'")))[0]['category_id']
-           print(d)
+           try:
+              gensql('insert','food_category',s)
+              d['item_category_id'] = (json.loads(dbget("select * from food_category where category = '"+str(s['category'])+"'")))[0]['category_id']
+              print(d)
           
-           gensql('insert','food_menu',d)
+              gensql('insert','food_menu',d)
+           except:
+              return json.dumps({"Return":"Duplicate Key Error or Value Error","ReturnCode":"DKEOV"},indent=2)
        
        
        return json.dumps({"Return": "Record Inserted Successfully","ReturnCode": "RIS","Status": "Success","StatusCode": "200"},indent = 4)
@@ -53,8 +58,11 @@ def Add_food_menu(request):
        return json.dumps({"Return": "Record Retrived Successfully","ReturnCode": "RRS","Returnvalue":GET_FOOD_MENUS,"Status": "Success","StatusCode": "200"},indent = 4)
 
 def select_item_category(request):
+   
     get_category = json.loads(dbget("select * from food_category"))
     return json.dumps({"Return": "Record Retrived Successfully","ReturnCode": "RRS","Returnvalue":get_category,"Status": "Success","StatusCode": "200"},indent = 4)
+   
+      
 
 def Update_Food_Menus(request):
    d = request.json
@@ -68,13 +76,21 @@ def Update_Food_Menus(request):
               datas = get_url.json()
               z['image_url'] = datas['body']['url']
               e['item_category_id'] = d['item_category_id']
-              gensql('update','food_menu',z,e)
-              
+              try:
+                 gensql('update','food_category',z,e)
+              except:
+                 return json.dumps({"Return":"Wrong Category Id value Error","ReturnCode":"WCVE"},indent=2)
+      
    s = {k:v for k,v in d.items() if k in ('food_id')}
    d = {k:v for k,v in d.items() if v is not None if v != '' if k not in ('food_id')}
    d['food_name'] = d['food_name'].title()
-   update_item = gensql('update','food_menu',d,s)
-   return json.dumps({"Return": "Record Updated Successfully","ReturnCode": "RUS","Status": "Success","StatusCode": "200"},indent = 4)
+   try:
+      update_item = gensql('update','food_menu',d,s)
+      return json.dumps({"Return": "Record Updated Successfully","ReturnCode": "RUS","Status": "Success","StatusCode": "200"},indent = 4)
+   
+   except:
+      return json.dumps({"Return":"Duplicate Key Error or Value Error","ReturnCode":"DKEOV"},indent=2)
+       
    
 
 def Display_Disable_Food_Item(request):
@@ -155,6 +171,3 @@ def Select_Food_Offers(request):
 			left join food_menu on food_menu.food_id = food_offers.food_id\
 			 left join food_category on food_category.category_id = food_menu.item_category_id"))
   return json.dumps({"Return": "Record Retrived Successfully","ReturnCode": "RRS","Returnvalue":get_food_offers,"Status": "Success","StatusCode": "200"},indent = 4)
-def Select_Food_Type(request):
-   get_food_type = json.loads(dbget("select * from food_type"))
-   return json.dumps({"Return": "Record Retrived Successfully","ReturnCode": "RRS","Returnvalue":get_food_type,"Status": "Success","StatusCode": "200"},indent = 4)

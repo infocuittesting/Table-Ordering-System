@@ -14,10 +14,12 @@ def Query_Table_Status(request):
 
 def Update_Food_Order_Status_Item(request):
     d = request.json
+    try:
 
-    dbput("update food_order set order_status_id = '"+str(d['order_status_id'])+"' where order_details_id = '"+str(d['order_details_id'])+"'")
-    return json.dumps({"Return": "Record Updated Successfully","ReturnCode": "RUS","Status": "Success","StatusCode": "200"},indent = 4)
-
+        dbput("update food_order set order_status_id = '"+str(d['order_status_id'])+"' where order_details_id = '"+str(d['order_details_id'])+"'")
+        return json.dumps({"Return": "Record Updated Successfully","ReturnCode": "RUS","Status": "Success","StatusCode": "200"},indent = 4)
+    except:
+        return json.dumps({"Return":"Wrong Value Error","ReturnCode":"WVE"})
 def Update_Order_Status(request):
     
     
@@ -32,29 +34,31 @@ def Update_ReadyforPayment_Status(request):
     
    
     d = request.json
-    e={"table_no":d['table_no']}
-    s = {'table_status_id' : 3,'payment_type_id':d['payment_type_id']}
-    
-    gensql('update','table_details',s,e)
-    get_order_no = json.loads(dbget("select order_no from food_order where order_status_id != 7 and table_no = '"+str(d['table_no'])+"' "))
-    dbput("update order_timings set bill_request_time = '"+str(application_datetime())+"' where order_no = '"+str(get_order_no[0]['order_no'])+"'")
-    
-    return json.dumps({"Return": "Record Updated Successfully","ReturnCode": "RUS","Status": "Success","StatusCode": "200"},indent = 4)
-
-
+    try:
+        e={"table_no":d['table_no']}
+        s = {'table_status_id' : 3,'payment_type_id':d['payment_type_id']}
+        
+        gensql('update','table_details',s,e)
+        get_order_no = json.loads(dbget("select order_no from food_order where order_status_id != 7 and table_no = '"+str(d['table_no'])+"' "))
+        dbput("update order_timings set bill_request_time = '"+str(application_datetime())+"' where order_no = '"+str(get_order_no[0]['order_no'])+"'")
+        
+        return json.dumps({"Return": "Record Updated Successfully","ReturnCode": "RUS","Status": "Success","StatusCode": "200"},indent = 4)
+    except:
+        
+     return json.dumps({"Return":"Wrong Value Error","ReturnCode":"WVE"})
 def Update_Table_Available_Status(request):
-    
-   d = request.json
-   s = {'table_status_id' : 1,'payment_type_id':3}
-   z = {'table_no':d['table_no']}
-   gensql('update','table_details',s,z)
+  
+       d = request.json
+       s = {'table_status_id' : 1,'payment_type_id':3}
+       z = {'table_no':d['table_no']}
+       gensql('update','table_details',s,z)
 
-   e = {'order_status_id':7}
-   gensql('update','food_order',e,d)
-   dbput("update order_timings set close_time = '"+str(application_datetime())+"' where order_no = '"+str(d['order_no'])+"'")
-    
-   return json.dumps({"Return": "Record Updated Successfully","ReturnCode": "RUS","Status": "Success","StatusCode": "200"},indent = 4)
-
+       e = {'order_status_id':7}
+       gensql('update','food_order',e,d)
+       dbput("update order_timings set close_time = '"+str(application_datetime())+"' where order_no = '"+str(d['order_no'])+"'")
+        
+       return json.dumps({"Return": "Record Updated Successfully","ReturnCode": "RUS","Status": "Success","StatusCode": "200"},indent = 4)
+   
 def Get_Order_Item_Table(request):
     
    d = request.json
@@ -101,7 +105,7 @@ def Get_Order_Item_Table(request):
 
    else:
     food_menu_details = {"table_no":d['table_no'],"order_no":0,
-                         "items":get_orders,'total_amount':0,"total_items":0,"sub_total":0,"total_offers":0}
+                         "items":get_orders,'total_amount':0,"total_items":0,"sub_total":0,"total_offers":0,"GST_Amount":0,"grand_total":0}
 
    return(json.dumps({"Return": "Record Retrived Successfully","ReturnCode": "RRS",
                       "Returnvalue":food_menu_details,"Status": "Success","StatusCode": "200"},indent = 4))  
