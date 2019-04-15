@@ -4,7 +4,10 @@ def Add_food_menu(request):
    if request.method =="POST":
        s = {}
        d = request.json
-       
+       #print("input data",d)
+       print("image",d['image_url'])
+       img = d['image_url']
+       print("img",img,type(img),len(img))
        d['food_name'] = d['food_name'].title()
        d['food_id'] = json.loads(dbget("select uuid_generate_v4() as order_no"))[0]['order_no']
        #Base 64 to Image
@@ -17,24 +20,33 @@ def Add_food_menu(request):
        if d['item_category_id'].isdigit():
            try:
               gensql('insert','food_menu',d)
+              return json.dumps({"Return": "Record Inserted Successfully","ReturnCode": "RIS","Status": "Success","StatusCode": "200"},indent = 4)
            except:
               return json.dumps({"Return":"Duplicate Key Error or Value Error","ReturnCode":"DKEOV"},indent=2)
        
        else:
-           if len(d['image_url']) != 0:
-              get_url = requests.post("https://cktab4aq0h.execute-api.us-east-1.amazonaws.com/tosimageupload",json={"base64":d['image_url']})
-              datas = get_url.json()
-              s['image_url'] = datas['body']['url']
-           s['category'] = d['item_category_id'].upper()
-           try:
-              gensql('insert','food_category',s)
+        
+              if len(img) != 0:
+              
+                 get_url = requests.post("https://cktab4aq0h.execute-api.us-east-1.amazonaws.com/tosimageupload",json={"base64":d['image_url']})
+                 datas = get_url.json()
+                 s['image_url'] = datas['body']['url']
+                 s['category'] = d['item_category_id'].upper()
+            
+             
+              s['category'] = d['item_category_id'].upper()
+              try:
+               gensql('insert','food_category',s)
+              except:
+                 return json.dumps({"Return":"category Duplicate Key Error or Value Error","ReturnCode":"DKEOV"},indent=2)
+       
               d['item_category_id'] = (json.loads(dbget("select * from food_category where category = '"+str(s['category'])+"'")))[0]['category_id']
               print(d)
-          
-              gensql('insert','food_menu',d)
-           except:
-              return json.dumps({"Return":"Duplicate Key Error or Value Error","ReturnCode":"DKEOV"},indent=2)
-       
+              try:
+               gensql('insert','food_menu',d)
+              except:
+                
+                return json.dumps({"Return":"food name Duplicate Key Error or Value Error","ReturnCode":"DKEOV"},indent=2)
        
        return json.dumps({"Return": "Record Inserted Successfully","ReturnCode": "RIS","Status": "Success","StatusCode": "200"},indent = 4)
    elif request.method =="GET":
