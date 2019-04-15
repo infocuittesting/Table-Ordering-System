@@ -27,7 +27,7 @@ def Display_Food_Menus(request):
                                            left join food_category on food_category.category_id= food_menu.item_category_id\
                                            left join food_type on food_type.food_type_id = food_menu.food_type_id\
                                            left join food_status on food_status.status_id = food_menu.food_status_id\
-                                           where food_menu.food_status_id = 1 \
+                                           where food_menu.food_status_id = 1 and  food_category.category_id !=7 \
                                            group by food_order_history.food_id,food_category.category_id,food_menu.food_name,food_name,food_menu.price,food_menu.food_id_url,\
                                            food_category.category,\
                                            food_type.food_type_id,food_type.food_type,food_category.image_url,food_status.status\
@@ -50,9 +50,17 @@ def Display_Food_Menus(request):
        final_get_offers_menu = [dict(item, item_image=[dict(image_url=item['food_id_url'])]) for item in get_offers_menu]
        final_get_best_sellers_menu = [dict(item, item_image=[dict(image_url=item['food_id_url'])]) for item in new_vals]
              
-       final_food_menu = [{"Food_Category":food_menu_details,"Offers":final_get_offers_menu,"Best_Sellers":final_get_best_sellers_menu}]
-       #final_food_menu['Food_Category'] = [food_menu_details]
-       #final_food_menu['Best_Sellers'] = [{"categry_name":"Best Sellers","category_img":"https://s3.amazonaws.com/image-upload-rekognition/tosfoodimages/20190406130327.png","item":new_vals}]
+       specials = json.loads(dbget("select food_menu.*,today_special.today_special_status from public.food_menu \
+                                  join today_special on food_menu.today_special_id = today_special.today_special_id \
+                                  where food_status_id=1 and item_category_id!=7 and food_menu.today_special_id=1"))
+
+       today_specials = [dict(special, item_image=[dict(image_url=special['food_id_url'])]) for special in specials]
+       final_food_menu = [{"Food_Category":food_menu_details,"Offers":final_get_offers_menu,
+                          "Best_Sellers":final_get_best_sellers_menu,
+                          "Today_Special":{"categry_name":"Today_Specials",
+                                           "category_img":"https://s3.amazonaws.com/image-upload-rekognition/tosfoodimages/new_work_cadillacmagazine-624x406.png",
+                                           "items":today_specials}}]
+
        return json.dumps({"Return": "Record Retrived Successfully","ReturnCode": "RRS","Returnvalue":final_food_menu,"Status": "Success","StatusCode": "200"},indent = 4)
 def Tablet_Login_And_Logout(request):
    d = request.json

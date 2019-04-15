@@ -39,10 +39,11 @@ def Add_food_menu(request):
        return json.dumps({"Return": "Record Inserted Successfully","ReturnCode": "RIS","Status": "Success","StatusCode": "200"},indent = 4)
    elif request.method =="GET":
        #food_details,food_menu_details = [],[]
-       GET_FOOD_MENUS = json.loads(dbget("select food_type.*,food_category.*,food_status.status, food_menu.* from food_menu\
+       GET_FOOD_MENUS = json.loads(dbget("select today_special.*,food_type.*,food_category.*,food_status.status, food_menu.* from food_menu\
                                          left join food_category on food_category.category_id = food_menu.item_category_id \
                                          left join food_status on food_status.status_id = food_menu.food_status_id\
-                                         left join food_type on food_type.food_type_id = food_menu.food_type_id"))
+                                         left join food_type on food_type.food_type_id = food_menu.food_type_id\
+                                         left join today_special on today_special.today_special_id = food_menu.today_special_id"))
        '''
        
        for food_menu in GET_FOOD_MENUS:
