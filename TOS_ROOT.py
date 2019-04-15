@@ -118,4 +118,5 @@ def unhandled_exception(e):
  return(json.dumps({"Return":"Method Not Allowed","Returncode":"405"}))
 	
 if __name__ == "__main__":
-    TOS.run(host ='192.168.99.1',port =5000)#run web application
+    TOS.run(debug=True)
+    #TOS.run(host ='192.168.99.1',port =5000)#run web application
