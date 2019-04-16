@@ -33,7 +33,7 @@ def Report_Service(request):
                 get_category_order['food_items_reports']=final
                 get_category_order.pop('items')
         
-        return json.dumps({"Return_category":get_category_orders},indent=2)
+        return json.dumps({"Return_Category":get_category_orders},indent=2)
     #get overall table orders report
     if d['type'] == 2:
         get_table_orders = json.loads(dbget("select table_no,count(table_no) from food_order_history\
