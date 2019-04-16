@@ -19,7 +19,7 @@ def Display_Food_Menus(request):
             
              if food_menu['category'] ==food_menu_detail['categry_name']:
                 food_menu['item_images'] = [{"item_image":food_menu['food_id_url']}]
-                food_menu_detail["item"].append(food_menu)
+                food_menu_detail["items"].append(food_menu)
        get_best_sellers= json.loads(dbget("select food_category.category_id,food_category.category,food_category.image_url,food_menu.food_name,food_menu.price,food_menu.food_id_url,\
                                            food_type.food_type_id,food_type.food_type,food_status.status,\
                                            food_order_history.food_id,count(*) from food_order_history \
