@@ -146,4 +146,4 @@ def Query_Notification_Food_Items(request):
                  for d in final_result['table_records']:
                   if   d['table_no'] == get_notification['table_no']:
                       d['items'].append(get_notification)
-    return json.dumps({"Return": "Record Retrived Successfully","ReturnCode": "RRS","Returnvalue":final_results,"Status": "Success","StatusCode": "200"},indent = 4)
+    return json.dumps({"Return": "Record Retrived Successfully","ReturnCode": "RRS","Notification_Count":len(final_results),"Returnvalue":final_results,"Status": "Success","StatusCode": "200"},indent = 4)
