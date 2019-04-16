@@ -13,7 +13,7 @@ def Display_Food_Menus(request):
        for food_menu in GET_FOOD_MENUS:
           if food_menu['category'] not in food_details:
              food_details.append(food_menu['category'])
-             food_menu_details.append({"categry_name":food_menu['category'],"category_img":food_menu['image_url'],"item":[]})
+             food_menu_details.append({"categry_name":food_menu['category'],"category_img":food_menu['image_url'],"items":[]})
        for food_menu in GET_FOOD_MENUS:
           for food_menu_detail in food_menu_details:
             
