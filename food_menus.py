@@ -87,6 +87,7 @@ def Update_Food_Menus(request):
    if len(d['image_url']) != 0:
               get_url = requests.post("https://cktab4aq0h.execute-api.us-east-1.amazonaws.com/tosimageupload",json={"base64":d['image_url']})
               datas = get_url.json()
+	      z,e = {},{}
               z['image_url'] = datas['body']['url']
               e['item_category_id'] = d['item_category_id']
               try:
