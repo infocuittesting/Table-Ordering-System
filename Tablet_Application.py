@@ -50,8 +50,13 @@ def Display_Food_Menus(request):
        final_get_offers_menu = [dict(item, item_image=[dict(image_url=item['food_id_url'])]) for item in get_offers_menu]
        final_get_best_sellers_menu = [dict(item, item_image=[dict(image_url=item['food_id_url'])]) for item in new_vals]
              
-       specials = json.loads(dbget("select food_menu.*,today_special.today_special_status from public.food_menu \
+       specials = json.loads(dbget("select food_category.category_id,food_category.category,food_category.image_url,food_menu.*,today_special.today_special_status,\
+                                   food_type.food_type_id,food_type.food_type,food_status.status\
+                                   from public.food_menu\
                                   join today_special on food_menu.today_special_id = today_special.today_special_id \
+                                  left join food_category on food_category.category_id= food_menu.item_category_id\
+                                  left join food_type on food_type.food_type_id = food_menu.food_type_id\
+                                  left join food_status on food_status.status_id = food_menu.food_status_id\
                                   where food_status_id=1 and item_category_id!=7 and food_menu.today_special_id=1"))
 
        today_specials = [dict(special, item_image=[dict(image_url=special['food_id_url'])]) for special in specials]
