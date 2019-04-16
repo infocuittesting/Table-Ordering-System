@@ -84,32 +84,31 @@ def Update_Food_Menus(request):
    image_url = d['image_url']
    if len(food_id) != 0:
           
-          r = requests.post("https://cktab4aq0h.execute-api.us-east-1.amazonaws.com/tosimageupload",json={"base64":d['food_id_url']})
+          r = requests.post("https://cktab4aq0h.execute-api.us-east-1.amazonaws.com/tosimageupload",json={"base64":food_id})
           data = r.json()
           d['food_id_url'] = data['body']['url']
           s = {k:v for k,v in d.items() if k in ('food_id')}
-          d = {k:v for k,v in d.items() if v is not None if v != '' if k not in ('food_id')}
+          d = {k:v for k,v in d.items() if v is not None if v != '' if k not in ('food_id','image_url')}
           d['food_name'] = d['food_name'].title()
-          try:
-            update_item = gensql('update','food_menu',d,s)
+         # try:
+          update_item = gensql('update','food_menu',d,s)
             
-          except:
-            return json.dumps({"Return":"Duplicate Key Error or Value Error","ReturnCode":"DKEOV"},indent=2)
+         # except:
+          #  return json.dumps({"Return":"Duplicate Key Error or Value Error","ReturnCode":"DKEOV"},indent=2)
        
    if len(image_url) != 0:
-              get_url = requests.post("https://cktab4aq0h.execute-api.us-east-1.amazonaws.com/tosimageupload",json={"base64":d['image_url']})
+              get_url = requests.post("https://cktab4aq0h.execute-api.us-east-1.amazonaws.com/tosimageupload",json={"base64":image_url})
               datas = get_url.json()
 	      #z,e = {},{}
               z['image_url'] = datas['body']['url']
               e['category_id'] = d['item_category_id']
-              try:
-                 gensql('update','food_category',z,e)
-              except:
-                 return json.dumps({"Return":"Wrong Category Id value Error","ReturnCode":"WCVE"},indent=2)
+              #try:
+              gensql('update','food_category',z,e)
+              #except:
+                # return json.dumps({"Return":"Wrong Category Id value Error","ReturnCode":"WCVE"},indent=2)
       
    
    return json.dumps({"Return": "Record Updated Successfully","ReturnCode": "RUS","Status": "Success","StatusCode": "200"},indent = 4)
-   
 
 def Display_Disable_Food_Item(request):
    get_disable_item = json.loads(dbget("select food_status.status, food_category.category,food_menu.* from food_menu  \
