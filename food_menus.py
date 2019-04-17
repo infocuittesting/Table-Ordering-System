@@ -5,15 +5,16 @@ def Add_food_menu(request):
        s = {}
        d = request.json
        #print("input data",d)
-       print("image",d['image_url'])
+       #print("image",d['image_url'])
+       food_id_url = d['food_id_url']
        img = d['image_url']
-       print("img",img,type(img),len(img))
+      # print("img",img,type(img),len(img))
        d['food_name'] = d['food_name'].title()
        d['food_id'] = json.loads(dbget("select uuid_generate_v4() as order_no"))[0]['order_no']
        #Base 64 to Image
-       if len(d['food_id_url']) != 0:
+       if len(food_id_url) != 0:
           
-          r = requests.post("https://cktab4aq0h.execute-api.us-east-1.amazonaws.com/tosimageupload",json={"base64":d['food_id_url']})
+          r = requests.post("https://cktab4aq0h.execute-api.us-east-1.amazonaws.com/tosimageupload",json={"base64":food_id_url})
           data = r.json()
           d['food_id_url'] = data['body']['url']
        d = {k:v for k,v in d.items() if v != ''  if v is not None if k  not in ('image_url')}
@@ -28,7 +29,7 @@ def Add_food_menu(request):
         
               if len(img) != 0:
               
-                 get_url = requests.post("https://cktab4aq0h.execute-api.us-east-1.amazonaws.com/tosimageupload",json={"base64":d['image_url']})
+                 get_url = requests.post("https://cktab4aq0h.execute-api.us-east-1.amazonaws.com/tosimageupload",json={"base64":img})
                  datas = get_url.json()
                  s['image_url'] = datas['body']['url']
                  s['category'] = d['item_category_id'].upper()
@@ -41,8 +42,9 @@ def Add_food_menu(request):
                  return json.dumps({"Return":"category Duplicate Key Error or Value Error","ReturnCode":"DKEOV"},indent=2)
        
               d['item_category_id'] = (json.loads(dbget("select * from food_category where category = '"+str(s['category'])+"'")))[0]['category_id']
-              print(d)
+              #print(d)
               try:
+               d = {k:v for k,v in d.items() if v != ''  if v is not None if k  not in ('image_url')}
                gensql('insert','food_menu',d)
               except:
                 
