@@ -10,6 +10,9 @@ def Add_food_menu(request):
        img = d['image_url']
       # print("img",img,type(img),len(img))
        d['food_name'] = d['food_name'].title()
+       get_name = json.loads(dbget("select count(*) from food_menu where food_name = '"+str(d['food_name'].title())+"'"))
+       if get_name[0]['count'] != 0 :
+                           return json.dumps({"Return":"Food Item Already Exist","ReturnCode":"FIAE","Status": "Success","StatusCode": "200"})
        d['food_id'] = json.loads(dbget("select uuid_generate_v4() as order_no"))[0]['order_no']
        #Base 64 to Image
        if len(food_id_url) != 0:
