@@ -83,7 +83,7 @@ def Update_Food_Menus(request):
    food_id =d['food_id_url']
    image_url = d['image_url']
    if len(food_id) != 0:
-          
+          print("if part working")
           r = requests.post("https://cktab4aq0h.execute-api.us-east-1.amazonaws.com/tosimageupload",json={"base64":food_id})
           data = r.json()
           d['food_id_url'] = data['body']['url']
@@ -95,6 +95,12 @@ def Update_Food_Menus(request):
             
          # except:
           #  return json.dumps({"Return":"Duplicate Key Error or Value Error","ReturnCode":"DKEOV"},indent=2)
+   else:
+      s = {k:v for k,v in d.items() if k in ('food_id')}
+      d = {k:v for k,v in d.items() if v is not None if v != '' if k not in ('food_id','image_url')}
+      d['food_name'] = d['food_name'].title()
+      
+      update_item = gensql('update','food_menu',d,s)
        
    if len(image_url) != 0:
               get_url = requests.post("https://cktab4aq0h.execute-api.us-east-1.amazonaws.com/tosimageupload",json={"base64":image_url})
@@ -106,6 +112,7 @@ def Update_Food_Menus(request):
               gensql('update','food_category',z,e)
               #except:
                 # return json.dumps({"Return":"Wrong Category Id value Error","ReturnCode":"WCVE"},indent=2)
+
       
    
    return json.dumps({"Return": "Record Updated Successfully","ReturnCode": "RUS","Status": "Success","StatusCode": "200"},indent = 4)
