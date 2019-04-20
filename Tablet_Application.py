@@ -47,8 +47,8 @@ def Display_Food_Menus(request):
                                          left join food_type on food_type.food_type_id = food_menu.food_type_id \
 				         where food_menu.food_status_id = 1 and offer_value != 0"))
        
-       final_get_offers_menu = [dict(item, item_image=[dict(image_url=item['food_id_url'])]) for item in get_offers_menu]
-       final_get_best_sellers_menu = [dict(item, item_image=[dict(image_url=item['food_id_url'])]) for item in new_vals]
+       final_get_offers_menu = [dict(item, item_images=[dict(item_image=item['food_id_url'])]) for item in get_offers_menu]
+       final_get_best_sellers_menu = [dict(item, item_images=[dict(item_image=item['food_id_url'])]) for item in new_vals]
              
        specials = json.loads(dbget("select food_category.category_id,food_category.category,food_category.image_url,food_menu.*,today_special.today_special_status,\
                                    food_type.food_type_id,food_type.food_type,food_status.status\
