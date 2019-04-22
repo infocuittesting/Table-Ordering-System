@@ -35,17 +35,30 @@ def Update_ReadyforPayment_Status(request):
    
     d = request.json
     try:
-        e={"table_no":d['table_no']}
-        s = {'table_status_id' : 3,'payment_type_id':d['payment_type_id']}
-        
-        gensql('update','table_details',s,e)
-        get_order_no = json.loads(dbget("select order_no from food_order where order_status_id != 7 and table_no = '"+str(d['table_no'])+"' "))
-        dbput("update order_timings set bill_request_time = '"+str(application_datetime())+"' where order_no = '"+str(get_order_no[0]['order_no'])+"'")
-        
-        return json.dumps({"Return": "Record Updated Successfully","ReturnCode": "RUS","Status": "Success","StatusCode": "200"},indent = 4)
+        item_count =  json.loads(dbget("select count(*) as item_count from food_order \
+                                        where order_status_id!=7 and table_no="+str(d['table_no'])+" \
+                                        and notification_status_id!=1"))[0]['item_count']
+        print("item_count", item_count)
+        if 0 == item_count:
+            e={"table_no":d['table_no']}
+            s = {'table_status_id' : 3,'payment_type_id':d['payment_type_id']}
+            
+            gensql('update','table_details',s,e)
+            get_order_no = json.loads(dbget("select order_no from food_order  \
+                                            where order_status_id != 7 and table_no = '"+str(d['table_no'])+"' "))
+            
+            dbput("update order_timings set bill_request_time = '"+str(application_datetime())+"'  \
+                   where order_no = '"+str(get_order_no[0]['order_no'])+"'")
+            
+            return json.dumps({"Return": "Record Updated Successfully","ReturnCode": "RUS",
+                               "Status": "Success","StatusCode": "200"},indent = 4)
+        else:
+            return json.dumps({"Return": ""+str(item_count)+" item(s) is not served","ReturnCode": "INS",
+                               "Status": "Success","item_count":item_count,"StatusCode": "200"},indent = 4)
     except:
         
      return json.dumps({"Return":"Wrong Value Error","ReturnCode":"WVE"})
+
 def Update_Table_Available_Status(request):
   
        d = request.json
