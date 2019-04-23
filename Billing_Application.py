@@ -35,8 +35,10 @@ def Update_ReadyforPayment_Status(request):
     d = request.json
     try:
         item_count =  json.loads(dbget("select count(*) as item_count from food_order \
-                                        where order_status_id!=7 and table_no="+str(d['table_no'])+" \
-                                        and notification_status_id!=1"))[0]['item_count']
+	                                join food_menu on food_order.food_id = food_menu.food_id \
+	                                join food_category on food_menu.item_category_id = food_category.category_id\
+	                                where order_status_id!=7 and table_no=4 and notification_status_id!=1 and \
+	                                food_category.category_id!=7"))[0]['item_count']
         print("item_count", item_count)
         if 0 == item_count:
             
