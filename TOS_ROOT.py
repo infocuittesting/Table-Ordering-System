@@ -85,6 +85,11 @@ def alertsend():
 @TOS.route("/Query_Notification_Food_Items",methods=['GET'])
 def alertrecevie():
     return Query_Notification_Food_Items(request)
+
+
+@TOS.route("/ServeAll_Food_Items",methods=['POST'])
+def serveall():
+    return ServeAll_Food_Items(request)
 #----------------TABLET----------------------------------------------------
 @TOS.route("/Display_Food_Menus",methods=['GET','POST'])
 def activefoodmenus():

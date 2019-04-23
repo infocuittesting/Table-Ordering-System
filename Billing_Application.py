@@ -2,10 +2,12 @@ from sqlwrapper import *
 from Fetch_Current_Datetime import *
 from collections import defaultdict
 def Query_Table_Status(request):
-    get_table_details = json.loads(dbget("select login_status.login_status,payment_type.*,table_status.table_status, table_details.* from table_details\
+    get_table_details = json.loads(dbget("select login_status.login_status,payment_type.*,table_status.table_status,\
+                                         table_details.*,order_timings.* from table_details\
 	left join table_status on table_status.table_status_id = table_details.table_status_id\
 	left join login_status on login_status.login_status_id = table_details.login_status_id\
-	left join payment_type on payment_type.payment_type_id = table_details.payment_type_id order by table_no"))
+	 left join order_timings on table_details.table_no = order_timings.table_no\
+	left join payment_type on payment_type.payment_type_id = table_details.payment_type_id order by table_details.table_no"))
     available_count = len(list(filter(lambda i: i['table_status'] == 'AVAILABLE', get_table_details)))
     unavailable_count =len(list(filter(lambda i: i['table_status'] == 'UN AVAILABLE', get_table_details)))
     payment_count = len(list(filter(lambda i: i['payment_type'] != 'NOPE', get_table_details)))
@@ -71,7 +73,10 @@ def Update_Table_Available_Status(request):
        e = {'order_status_id':7}
        gensql('update','food_order',e,d)
        dbput("update order_timings set close_time = '"+str(application_datetime())+"' where order_no = '"+str(d['order_no'])+"'")
-        
+       
+       dbput("INSERT INTO history_order_timings(order_no, order_time, bill_request_time, close_time,table_no)  \
+          SELECT * FROM order_timings where table_no = '"+str(d['table_no'])+"'")
+       dbput("delete from order_timings where table_no = '"+str(d['table_no'])+"'")
        return json.dumps({"Return": "Record Updated Successfully","ReturnCode": "RUS","Status": "Success","StatusCode": "200"},indent = 4)
    
 def Get_Order_Item_Table(request):
@@ -114,13 +119,20 @@ def Get_Order_Item_Table(request):
    if len(get_orders) != 0 :
     sub_total = sum([x['total_price'] for x in finals])
     offer_value = sum([x['offer_value']*x['quantity'] for x in get_orders])
+    total_value = sub_total-offer_value
     food_menu_details = {"table_no":d['table_no'],"order_no":get_orders[0]['order_no'],
-                         "items":finals,'grand_total':"{0:.2f}".format((sub_total+((sub_total*12)/100)-offer_value)),
-                         "GST_Amount":"{0:.2f}".format((sub_total*12)/100),"total_items":len(finals),"sub_total":sub_total,"total_offers":offer_value}
+                         "items":finals,'grand_total':"{0:.2f}".format(sub_total+(total_value*6)/100+(total_value*6)/100),
+                         "CGST_Amount":"{0:.2f}".format((total_value*6)/100),
+                         "SGST_Amount":"{0:.2f}".format((total_value*6)/100),
+                         "total_items":len(finals),"sub_total":sub_total,
+                         "total_amount_offers":total_value,
+                         "total_offers":offer_value}
 
    else:
     food_menu_details = {"table_no":d['table_no'],"order_no":0,
-                         "items":get_orders,'total_amount':0,"total_items":0,"sub_total":0,"total_offers":0,"GST_Amount":0,"grand_total":0}
+                         "items":get_orders,'total_amount':0,"total_items":0,"sub_total":0,
+                         "CGST_Amount":0,"SGST_Amount":0,"total_amount_offers":0,
+                         "total_offers":0,"GST_Amount":0,"grand_total":0}
 
    return(json.dumps({"Return": "Record Retrived Successfully","ReturnCode": "RRS",
                       "Returnvalue":food_menu_details,"Status": "Success","StatusCode": "200"},indent = 4))  
@@ -135,6 +147,14 @@ def Update_Notification_Status(request):
               notification_time='"+str(application_datetime().strftime("%Y-%m-%d %H:%M:%S"))+"' where order_details_id in ("+values+")")
     else:
       dbput("update food_order set notification_status_id='"+str(d['notification_status_id'])+"' where order_details_id in ("+values+")")
+    return json.dumps({"Return": "Record Updated Successfully","ReturnCode": "RUS","Status": "Success","StatusCode": "200"},indent = 4)
+def ServeAll_Food_Items(request):
+    d = request.json
+    #values = ','.join("'{0}'".format(x) for x in d['order_details_id'])
+    values = ', '.join(map(str, d['order_details_id']))
+    print(values)
+    dbput("update food_order set notification_status_id='2',order_status_id = '6',\
+              notification_time='"+str(application_datetime().strftime("%Y-%m-%d %H:%M:%S"))+"' where order_details_id in ("+values+")")
     return json.dumps({"Return": "Record Updated Successfully","ReturnCode": "RUS","Status": "Success","StatusCode": "200"},indent = 4)
 def Query_Notification_Food_Items(request):
     notify_time,final_results,table_no = [],[],[]

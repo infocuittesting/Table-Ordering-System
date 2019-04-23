@@ -44,7 +44,7 @@ def Place_Order(request):
                 dbput("INSERT INTO  food_order (order_no, table_no, food_id, quantity, order_status_id, datetime, notification_status_id)VALUES {}".format(values))
                        
                 try:
-                    maintain_time = {"order_no":order_no,"order_time":application_datetime()}
+                    maintain_time = {"order_no":order_no,"order_time":application_datetime(),"table_no":str(d['table_no'])}
                     gensql('insert','order_timings',maintain_time)
                 except:
                     pass
