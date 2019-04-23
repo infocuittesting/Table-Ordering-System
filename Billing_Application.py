@@ -3,7 +3,7 @@ from Fetch_Current_Datetime import *
 from collections import defaultdict
 def Query_Table_Status(request):
     get_table_details = json.loads(dbget("select login_status.login_status,payment_type.*,table_status.table_status,\
-                                         table_details.*,order_timings.* from table_details\
+                                         table_details.*,order_timings.order_time,order_timings.bill_request_time,order_timings.close_time from table_details\
 	left join table_status on table_status.table_status_id = table_details.table_status_id\
 	left join login_status on login_status.login_status_id = table_details.login_status_id\
 	 left join order_timings on table_details.table_no = order_timings.table_no\
