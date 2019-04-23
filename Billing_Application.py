@@ -71,11 +71,16 @@ def Update_Table_Available_Status(request):
        gensql('update','table_details',s,z)
 
        e = {'order_status_id':7}
-       gensql('update','food_order',e,d)
+       gensql('update','food_order',e,z)
        dbput("update order_timings set close_time = '"+str(application_datetime())+"' where order_no = '"+str(d['order_no'])+"'")
        
        dbput("INSERT INTO history_order_timings(order_no, order_time, bill_request_time, close_time,table_no)  \
           SELECT * FROM order_timings where table_no = '"+str(d['table_no'])+"'")
+       dbput("update history_order_timings set total_items = '"+str(d['total_items'])+"',\
+             sub_total = '"+str(d['sub_total'])+"',total_offers = '"+str(d['total_offers'])+"',\
+             total_amount_offers = '"+str(d['total_amount_offers'])+"',cgst_amount = '"+str(d['CGST_Amount'])+"',sgst_amount='"+str(d['SGST_Amount'])+"',grand_total = '"+str(d['grand_total'])+"'\
+             where order_no = '"+str(d['order_no'])+"'")
+       
        dbput("delete from order_timings where table_no = '"+str(d['table_no'])+"'")
        return json.dumps({"Return": "Record Updated Successfully","ReturnCode": "RUS","Status": "Success","StatusCode": "200"},indent = 4)
    
