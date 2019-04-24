@@ -71,6 +71,7 @@ def Update_Table_Available_Status(request):
        gensql('update','table_details',s,z)
 
        e = {'order_status_id':7}
+       z.update({"order_no":d['order_no']})
        gensql('update','food_order',e,z)
        
        dbput("update order_timings set close_time = '"+str(application_datetime())+"' where order_no = '"+str(d['order_no'])+"';\
