@@ -6,6 +6,8 @@ def Place_Order(request):
     
     d = request.json
     #print(d)
+    z = {k:v for k,v in d.items() if v != '' if k in ('cus_name','cus_mobile')}
+    d = {k:v for k,v in d.items()if k not in ('cus_name','cus_mobile')}
     items_value = d['items']
     list1,list2 = [],[]
     check_item = ""
@@ -46,8 +48,11 @@ def Place_Order(request):
                 try:
                     maintain_time = {"order_no":order_no,"order_time":application_datetime(),"table_no":str(d['table_no'])}
                     gensql('insert','order_timings',maintain_time)
+                    z.update({"order_no":order_no,"table_no":str(d['table_no'])})
+                    gensql('insert','feedback',z)
                 except:
                     pass
+                
                 if len(d['comments'])!=0:
                     order_comments = {'order_no':order_no,'order_comments':d['comments'],'comments_time':application_datetime()}
                    

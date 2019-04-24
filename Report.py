@@ -80,6 +80,13 @@ def Categories_Basis_Report(request):
     return json.dumps({"Return":finals},indent=2)
 def Insert_Feedback(request):
     d= request.json
-    d['datetime'] = application_datetime()
-    gensql('insert','feedback',d)
+    e = {"order_no":d['order_no']}
+    d = {k:v for k,v in d.items() if k not in ('order_no')}
+    d.update({'feedback_time':application_datetime(),"q1":d['q1'].title(),
+              "q2":d['q2'].title(),
+              "q3":d['q3'].title(),
+              "q4":d['q4'].title(),
+              "q5":d['q5'].title()})
+    
+    gensql('update','feedback',d,e)
     return json.dumps({"Return": "Record Inserted Successfully","ReturnCode": "RIS","Status": "Success","StatusCode": "200"},indent = 4)
