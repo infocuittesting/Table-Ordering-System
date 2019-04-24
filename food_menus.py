@@ -1,5 +1,7 @@
 from sqlwrapper import *
 import requests
+import re
+import string
 def Add_food_menu(request):
    if request.method =="POST":
        s = {}
@@ -9,8 +11,10 @@ def Add_food_menu(request):
        food_id_url = d['food_id_url']
        img = d['image_url']
       # print("img",img,type(img),len(img))
-       d['food_name'] = d['food_name'].title()
-       get_name = json.loads(dbget("select count(*) from food_menu where food_name = '"+str(d['food_name'].title())+"'"))
+       
+       d['food_name'] = re.sub("'","''",d['food_name'])
+       d['food_name'] = string.capwords(d['food_name'])
+       get_name = json.loads(dbget("select count(*) from food_menu where food_name = '"+str(d['food_name'])+"'"))
        if get_name[0]['count'] == 0:
                            
           d['food_id'] = json.loads(dbget("select uuid_generate_v4() as order_no"))[0]['order_no']
@@ -97,7 +101,9 @@ def Update_Food_Menus(request):
           d['food_id_url'] = data['body']['url']
           s = {k:v for k,v in d.items() if k in ('food_id')}
           d = {k:v for k,v in d.items() if v is not None if v != '' if k not in ('food_id','image_url')}
-          d['food_name'] = d['food_name'].title()
+          d['food_name'] = re.sub("'","''",d['food_name'])
+          d['food_name'] = string.capwords(d['food_name'])
+         
          # try:
           update_item = gensql('update','food_menu',d,s)
             
@@ -106,7 +112,8 @@ def Update_Food_Menus(request):
    else:
       s = {k:v for k,v in d.items() if k in ('food_id')}
       d = {k:v for k,v in d.items() if v is not None if v != '' if k not in ('food_id','image_url')}
-      d['food_name'] = d['food_name'].title()
+      d['food_name'] = re.sub("'","''",d['food_name'])
+      d['food_name'] = string.capwords(d['food_name'])
       
       update_item = gensql('update','food_menu',d,s)
        
