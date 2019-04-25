@@ -56,6 +56,9 @@ def Report_Service(request):
                     
             
             return json.dumps({"Return":"Table","Return_Table":get_category_table_order},indent=2)
+    if d['type'] == 3:
+        get_amount = json.loads(dbget("select sum(grand_total) as amount,date(order_time) from history_order_timings group by date(order_time) order by date(order_time)"))
+        return json.dumps({"Return":"linear","dataProvider":get_amount},indent=2)
 def Categories_Basis_Report(request):
     d = request.json
     get_category_orders = []
