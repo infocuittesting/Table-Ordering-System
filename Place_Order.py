@@ -91,7 +91,10 @@ def Query_today_food_orders(request):
        order_no = all_table_orders[0]['order_no']
        comments = json.loads(dbget("select * from public.order_comments where order_no='"+order_no+"' order by comments_time "))
        total_orders.append({'table_no':table,'order_no':order_no,'all_items':all_category,'commenst':comments})
-   order_status_count = json.loads(dbget("select count(*) as order_status_count from food_order where order_status_id=5 \
+   order_status_count = json.loads(dbget("select count(*) as order_status_count from food_order\
+                                       left join food_menu on food_menu.food_id = food_order.food_id\
+                                       left join food_category on food_category.category_id =food_menu.item_category_id\
+                                        where order_status_id=5 and food_menu.item_category_id!=7 \
                                          group by order_status_id"))
    
    order_count1 = order_status_count[0]['order_status_count'] if len(order_status_count) != 0 else 0
@@ -128,8 +131,11 @@ def Query_food_orders_waiter(request):
        comments = json.loads(
            dbget("select * from public.order_comments where order_no='" + order_no + "' order by comments_time "))
        total_orders.append({'table_no': table, 'order_no': order_no, 'all_items': all_category, 'commenst': comments})
-   order_status_count = json.loads(dbget("select count(*) as order_status_count from food_order where order_status_id=5 \
-                                        group by order_status_id"))
+   order_status_count = json.loads(dbget("select count(*) as order_status_count from food_order\
+                                       left join food_menu on food_menu.food_id = food_order.food_id\
+                                       left join food_category on food_category.category_id =food_menu.item_category_id\
+                                        where order_status_id=5 and food_menu.item_category_id!=7 \
+                                         group by order_status_id"))
 
    order_count1 = order_status_count[0]['order_status_count'] if len(order_status_count) != 0 else 0
    ed_time = time.time()

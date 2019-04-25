@@ -170,6 +170,13 @@ def Query_Notification_Food_Items(request):
 	left join notification_status on notification_status.notification_status_id = food_order.notification_status_id\
 	where order_status_id =6 and food_order.notification_status_id  =2\
 	order by food_order.notification_time"))
+    get_extra_item = json.loads(dbget("select notification_status,notification_time, food_order.*,food_menu.food_name from food_order\
+	left join food_menu on food_menu.food_id =food_order.food_id \
+	left join notification_status on notification_status.notification_status_id = food_order.notification_status_id\
+	where  food_order.notification_status_id  =3 and  food_menu.item_category_id =7 \
+	order by food_order.notification_time")) 
+
+    get_notifications = get_notifications + get_extra_item
     for get_notification in get_notifications:
           if get_notification['notification_time'] not in notify_time:
              notify_time.append(get_notification['notification_time'])
@@ -188,4 +195,11 @@ def Query_Notification_Food_Items(request):
                  for d in final_result['table_records']:
                   if   d['table_no'] == get_notification['table_no']:
                       d['items'].append(get_notification)
+
+    get_extra_item = json.loads(dbget("select notification_status,notification_time, food_order.*,food_menu.food_name from food_order\
+	left join food_menu on food_menu.food_id =food_order.food_id \
+	left join notification_status on notification_status.notification_status_id = food_order.notification_status_id\
+	where  food_order.notification_status_id  =2 and  food_menu.item_category_id =7 \
+	order by food_order.notification_time"))                      
+                      
     return json.dumps({"Return": "Record Retrived Successfully","ReturnCode": "RRS","Notification_Count":len(final_results),"Returnvalue":final_results,"Status": "Success","StatusCode": "200"},indent = 4)
