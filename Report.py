@@ -12,7 +12,7 @@ def Report_Service(request):
                                      FROM public.food_order_history join food_menu on\
                                      food_order_history.food_id  = food_menu.food_id\
                                       join food_category on food_menu.item_category_id = food_category.category_id\
-                                         where food_category.category_id!=7 and datetime between '"+d['from_date']+"' and '"+d['to_date']+"'\
+                                         where food_category.category_id!=62 and datetime between '"+d['from_date']+"' and '"+d['to_date']+"'\
                                       group by food_menu.food_name,food_category.category"))
         
         c = defaultdict(int)
@@ -40,7 +40,7 @@ def Report_Service(request):
                 table_category=json.loads(dbget("select food_order_history.food_id,food_order_history.table_no,food_menu.food_name,food_category.category,count(food_menu.food_id) from food_order_history \
                                                                 left join food_menu on food_menu.food_id= food_order_history.food_id\
                                                                 left join food_category on food_category.category_id = food_menu.item_category_id\
-                                                                where date(datetime) between '"+str(d['from_date'])+"' and '"+str(d['to_date'])+"' and table_no ='"+str(get_table_order['table_no'])+"' and  item_category_id != 7 group by food_order_history.food_id,food_order_history.table_no,\
+                                                                where date(datetime) between '"+str(d['from_date'])+"' and '"+str(d['to_date'])+"' and table_no ='"+str(get_table_order['table_no'])+"' and  item_category_id != 62 group by food_order_history.food_id,food_order_history.table_no,\
                                                                 food_category.category,food_menu.item_category_id,food_menu.food_name "))
                 #res = list(filter(lambda i: i['id'] != 2, test_list)) 
                 get_category_table_order.append({"table_no":"Table"+" "+str(get_table_order['table_no']),"Count":get_table_order['count'],"items":table_category})

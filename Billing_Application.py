@@ -40,7 +40,7 @@ def Update_ReadyforPayment_Status(request):
 	                                join food_menu on food_order.food_id = food_menu.food_id \
 	                                join food_category on food_menu.item_category_id = food_category.category_id\
 	                                where order_status_id!=7 and table_no='"+str(d['table_no'])+"' and notification_status_id!=1 and \
-	                                food_category.category_id!=7"))[0]['item_count']
+	                                food_category.category_id!=62"))[0]['item_count']
         print("item_count", item_count)
         if 0 == item_count:
             
@@ -98,7 +98,7 @@ def Get_Order_Item_Table(request):
     left join order_status on order_status.order_status_id = food_order.order_status_id \
     left join food_type on food_type.food_type_id = food_menu.food_type_id \
     where food_order.table_no = '"+str(d['table_no'])+"' and food_order.order_status_id != 7 \
-    and food_menu.item_category_id!=7 order by datetime"))
+    and food_menu.item_category_id!=62 order by datetime"))
 
    
    #print(total_amount)
@@ -173,7 +173,7 @@ def Query_Notification_Food_Items(request):
     get_extra_item = json.loads(dbget("select notification_status,notification_time, food_order.*,food_menu.food_name from food_order\
 	left join food_menu on food_menu.food_id =food_order.food_id \
 	left join notification_status on notification_status.notification_status_id = food_order.notification_status_id\
-	where  food_order.notification_status_id  =3 and  food_menu.item_category_id =7 \
+	where  food_order.notification_status_id  =3 and  food_menu.item_category_id =62 \
 	order by food_order.notification_time")) 
 
     get_notifications = get_notifications + get_extra_item
@@ -196,10 +196,6 @@ def Query_Notification_Food_Items(request):
                   if   d['table_no'] == get_notification['table_no']:
                       d['items'].append(get_notification)
 
-    get_extra_item = json.loads(dbget("select notification_status,notification_time, food_order.*,food_menu.food_name from food_order\
-	left join food_menu on food_menu.food_id =food_order.food_id \
-	left join notification_status on notification_status.notification_status_id = food_order.notification_status_id\
-	where  food_order.notification_status_id  =2 and  food_menu.item_category_id =7 \
-	order by food_order.notification_time"))                      
+                    
                       
     return json.dumps({"Return": "Record Retrived Successfully","ReturnCode": "RRS","Notification_Count":len(final_results),"Returnvalue":final_results,"Status": "Success","StatusCode": "200"},indent = 4)

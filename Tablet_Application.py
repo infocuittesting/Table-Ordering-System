@@ -8,7 +8,7 @@ def Display_Food_Menus(request):
        GET_FOOD_MENUS = json.loads(dbget("select food_type.*,food_category.*,food_status.status, food_menu.* from food_menu\
                                          left join food_category on food_category.category_id = food_menu.item_category_id \
                                          left join food_status on food_status.status_id = food_menu.food_status_id\
-                                         left join food_type on food_type.food_type_id = food_menu.food_type_id where food_menu.food_status_id = 1 and food_category.category_id !=7 "))
+                                         left join food_type on food_type.food_type_id = food_menu.food_type_id where food_menu.food_status_id = 1 and food_category.category_id !=62 "))
        #get_best_sellers = json.loads(dbget(""))
        for food_menu in GET_FOOD_MENUS:
           if food_menu['category'] not in food_details:
@@ -27,7 +27,7 @@ def Display_Food_Menus(request):
                                            left join food_category on food_category.category_id= food_menu.item_category_id\
                                            left join food_type on food_type.food_type_id = food_menu.food_type_id\
                                            left join food_status on food_status.status_id = food_menu.food_status_id\
-                                           where food_menu.food_status_id = 1 and  food_category.category_id !=7 \
+                                           where food_menu.food_status_id = 1 and  food_category.category_id !=62 \
                                            group by food_order_history.food_id,food_category.category_id,food_menu.food_name,food_name,food_menu.price,food_menu.food_id_url,\
                                            food_category.category,\
                                            food_type.food_type_id,food_type.food_type,food_category.image_url,food_status.status\
@@ -57,7 +57,7 @@ def Display_Food_Menus(request):
                                   left join food_category on food_category.category_id= food_menu.item_category_id\
                                   left join food_type on food_type.food_type_id = food_menu.food_type_id\
                                   left join food_status on food_status.status_id = food_menu.food_status_id\
-                                  where food_status_id=1 and item_category_id!=7 and food_menu.today_special_id=1"))
+                                  where food_status_id=1 and item_category_id!=62 and food_menu.today_special_id=1"))
 
        today_specials = [dict(special, item_image=[dict(image_url=special['food_id_url'])]) for special in specials]
        final_food_menu = [{"Food_Category":food_menu_details,"Offers":final_get_offers_menu,
@@ -100,6 +100,6 @@ def Query_Extra_Item_Category(request):
        get_extra_item = json.loads(dbget("select food_type.*,food_category.*,food_status.status, food_menu.* from food_menu\
                                          left join food_category on food_category.category_id = food_menu.item_category_id \
                                          left join food_status on food_status.status_id = food_menu.food_status_id\
-                                         left join food_type on food_type.food_type_id = food_menu.food_type_id where food_menu.food_status_id = 1 and food_category.category_id = 7"))
+                                         left join food_type on food_type.food_type_id = food_menu.food_type_id where food_menu.food_status_id = 1 and food_category.category_id = 62"))
        
        return json.dumps({"Return": "Record Retrived Successfully","ReturnCode": "RRS","Returnvalue":get_extra_item,"Status": "Success","StatusCode": "200"},indent = 4)  

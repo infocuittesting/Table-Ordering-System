@@ -76,7 +76,7 @@ def Query_today_food_orders(request):
                                    left join order_status on order_status.order_status_id = \
                                    food_order.order_status_id join notification_status on\
                                    food_order.notification_status_id = notification_status.notification_status_id \
-                                   where food_order.order_status_id!=7 and food_menu.item_category_id!=7 \
+                                   where food_order.order_status_id!=7 and food_menu.item_category_id!=62 \
                                    order by datetime"))
    #print(today_orders)
    tables = list(set(order['table_no'] for order in today_orders))
@@ -94,7 +94,7 @@ def Query_today_food_orders(request):
    order_status_count = json.loads(dbget("select count(*) as order_status_count from food_order\
                                        left join food_menu on food_menu.food_id = food_order.food_id\
                                        left join food_category on food_category.category_id =food_menu.item_category_id\
-                                        where order_status_id=5 and food_menu.item_category_id!=7 \
+                                        where order_status_id=5 and food_menu.item_category_id!=62 \
                                          group by order_status_id"))
    
    order_count1 = order_status_count[0]['order_status_count'] if len(order_status_count) != 0 else 0
@@ -134,7 +134,7 @@ def Query_food_orders_waiter(request):
    order_status_count = json.loads(dbget("select count(*) as order_status_count from food_order\
                                        left join food_menu on food_menu.food_id = food_order.food_id\
                                        left join food_category on food_category.category_id =food_menu.item_category_id\
-                                        where order_status_id=5 and food_menu.item_category_id!=7 \
+                                        where order_status_id=5 and food_menu.item_category_id!=62 \
                                          group by order_status_id"))
 
    order_count1 = order_status_count[0]['order_status_count'] if len(order_status_count) != 0 else 0
