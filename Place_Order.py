@@ -143,3 +143,19 @@ def Query_food_orders_waiter(request):
    print("Time Taken", full_time)
    return json.dumps({"Return": "Record Retrived Successfully", "ReturnCode": "RRS", "Returnvalue": total_orders,
                       "order_status_count": order_count1}, indent=2)
+
+def Query_today_food_order_table(request):
+      
+    table_no = request.json['table_no']
+    today_orders = json.loads(dbget("select food_menu.food_name,food_category.*, food_order.*,\
+                                  order_status.order_status_desc,notification_status.* from food_order\
+                                   left join food_menu on food_menu.food_id = food_order.food_id\
+                                   left join food_category on food_category.category_id =food_menu.item_category_id\
+                                   left join order_status on order_status.order_status_id = \
+                                   food_order.order_status_id join notification_status on\
+                                   food_order.notification_status_id = notification_status.notification_status_id \
+                                   where food_order.order_status_id!=7 and food_menu.item_category_id!=62   \
+                                   and food_order.table_no= "+str(table_no)+"\
+                                   order by datetime"))
+    
+    return json.dumps({"Return": "Record Retrived Successfully","ReturnCode": "RRS","Returnvalue":today_orders},indent=2)
