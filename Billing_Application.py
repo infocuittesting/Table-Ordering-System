@@ -70,7 +70,7 @@ def Update_Table_Available_Status(request):
       
        dbput("update order_timings set close_time = '"+str(application_datetime())+"' where order_no = '"+str(d['order_no'])+"';\
              INSERT INTO history_order_timings(order_no, order_time, bill_request_time, close_time,table_no)  \
-          SELECT * FROM order_timings where table_no = '"+str(d['table_no'])+"';\
+          SELECT order_no, order_time, bill_request_time, close_time,table_no FROM order_timings where table_no = '"+str(d['table_no'])+"';\
           update history_order_timings set total_items = '"+str(d['total_items'])+"',\
              sub_total = '"+str(d['sub_total'])+"',total_offers = '"+str(d['total_offers'])+"',\
              total_amount_offers = '"+str(d['total_amount_offers'])+"',cgst_amount = '"+str(d['CGST_Amount'])+"',sgst_amount='"+str(d['SGST_Amount'])+"',grand_total = '"+str(d['grand_total'])+"'\
