@@ -1,9 +1,10 @@
 from sqlwrapper import *
+import datetime
 from datetime import datetime,timedelta
 from Fetch_Current_Datetime import *
 def Sales_Closed(request):
    
-   yesterday_date = datetime.datetime.strptime(application_datetime().strftime("%Y-%m-%d"),"%Y-%m-%d")-timedelta(days=1)
+   yesterday_date = datetime.strptime(application_datetime().strftime("%Y-%m-%d"),"%Y-%m-%d")-timedelta(days=1)
    yesterday = yesterday_date.strftime("%Y-%m-%d")
    print(yesterday_date.strftime("%Y-%m-%d"))
    dbput("INSERT INTO food_order_history(order_details_id, order_no, table_no, food_id, quantity, order_status_id, datetime)  \
