@@ -69,7 +69,7 @@ def Display_Food_Menus(request):
                                            "items":today_specials
                                            },
                           "Changes_Flage":json.loads(dbget("select disp_fm_flag as d from table_details \
-                                                            where table_no_id='"+str(d['table_no'])+"'"))[0]['d']
+                                                            where table_no='"+str(d['table_no'])+"'"))[0]['d']
                            }
                           ]
 
