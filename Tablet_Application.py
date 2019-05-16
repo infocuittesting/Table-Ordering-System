@@ -2,7 +2,8 @@ from sqlwrapper import *
 import base64
 from collections import Counter
 def Display_Food_Menus(request):
-    
+
+       d = request.json 
     
        food_details,food_menu_details = [],[]
        GET_FOOD_MENUS = json.loads(dbget("select food_type.*,food_category.*,food_status.status, food_menu.* from food_menu\
@@ -60,11 +61,17 @@ def Display_Food_Menus(request):
                                   where food_status_id=1 and item_category_id!=62 and food_menu.today_special_id=1"))
 
        today_specials = [dict(special, item_image=[dict(image_url=special['food_id_url'])]) for special in specials]
-       final_food_menu = [{"Food_Category":food_menu_details,"Offers":final_get_offers_menu,
+       final_food_menu = [{
+                          "Food_Category":food_menu_details,"Offers":final_get_offers_menu,
                           "Best_Sellers":final_get_best_sellers_menu,
                           "Today_Special":{"categry_name":"Today_Specials",
                                            "category_img":"https://s3.amazonaws.com/image-upload-rekognition/tosfoodimages/new_work_cadillacmagazine-624x406.png",
-                                           "items":today_specials}}]
+                                           "items":today_specials
+                                           },
+                          "Changes_Flage":json.loads(dbget("select disp_fm_flag as d from table_details \
+                                                            where table_no_id='"+str(d['table_no'])+"'"))[0]['d']
+                           }
+                          ]
 
        return json.dumps({"Return": "Record Retrived Successfully","ReturnCode": "RRS","Returnvalue":final_food_menu,"Status": "Success","StatusCode": "200"},indent = 4)
 def Tablet_Login_And_Logout(request):
