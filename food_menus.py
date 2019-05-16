@@ -53,6 +53,7 @@ def Add_food_menu(request):
                  try:
                   d = {k:v for k,v in d.items() if v != ''  if v is not None if k  not in ('image_url')}
                   gensql('insert','food_menu',d)
+                  dbput("update table_details set disp_fm_flag=1")
                  except:
                    
                    return json.dumps({"Return":"food name Duplicate Key Error or Value Error","ReturnCode":"DKEOV"},indent=2)
@@ -68,18 +69,7 @@ def Add_food_menu(request):
                                          left join food_status on food_status.status_id = food_menu.food_status_id\
                                          left join food_type on food_type.food_type_id = food_menu.food_type_id\
                                          left join today_special on today_special.today_special_id = food_menu.today_special_id"))
-       '''
-       
-       for food_menu in GET_FOOD_MENUS:
-          if food_menu['category'] not in food_details:
-             food_details.append(food_menu['category'])
-             food_menu_details.append({"categry_name":food_menu['category'],"category_img":food_menu['image_url'],"category_id":food_menu['category_id'],"item":[]})
-       for food_menu in GET_FOOD_MENUS:
-          for food_menu_detail in food_menu_details:
-            
-             if food_menu['category'] ==food_menu_detail['categry_name']:
-                food_menu_detail["item"].append(food_menu)
-       '''
+
        return json.dumps({"Return": "Record Retrived Successfully","ReturnCode": "RRS","Returnvalue":GET_FOOD_MENUS,"Status": "Success","StatusCode": "200"},indent = 4)
 
 def select_item_category(request):
@@ -132,7 +122,7 @@ def Update_Food_Menus(request):
               e['category_id'] = d['item_category_id']
               
               gensql('update','food_category',z,e)
-   
+   dbput("update table_details set disp_fm_flag=1")
    return json.dumps({"Return": "Record Updated Successfully","ReturnCode": "RUS","Status": "Success","StatusCode": "200"},indent = 4)
 
 def Display_Disable_Food_Item(request):
@@ -212,4 +202,11 @@ def Select_Food_Offers(request):
 			 left join offer_status on offer_status.offer_status_id = food_offers.offer_status_id\
 			left join food_menu on food_menu.food_id = food_offers.food_id\
 			 left join food_category on food_category.category_id = food_menu.item_category_id"))
-  return json.dumps({"Return": "Record Retrived Successfully","ReturnCode": "RRS","Returnvalue":get_food_offers,"Status": "Success","StatusCode": "200"},indent = 4)
+  return json.dumps({"Return": "Record Retrived Successfully","ReturnCode": "RRS","Returnvalue":get_food_offers,
+                     "Status": "Success","StatusCode": "200"},indent = 4)
+
+def Update_FoodMenu_Flag(reqeust):
+   dbput("update table_details set disp_fm_flag=1")
+   return json.dumps({"Return": "Record Updated Successfully","ReturnCode": "RUS",
+                      "Status": "Success","StatusCode": "200"},indent = 4)   
+  
