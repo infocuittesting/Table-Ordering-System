@@ -104,6 +104,9 @@ def loginlogout():
 @TOS.route("/Query_Extra_Item_Category",methods=['GET','POST'])
 def Extraitem():
     return Query_Extra_Item_Category(request)
+@TOS.route("/Update_FoodMenu_Flag",methods=['GET','POST'])
+def UpdateFoodMenuFlag():
+    return Update_FoodMenu_Flag(request)
 #------------sales closed-------------
 @TOS.route("/Sales_Closed",methods=['GET'])
 def salesclosed():
