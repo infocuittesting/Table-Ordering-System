@@ -206,7 +206,7 @@ def Select_Food_Offers(request):
                      "Status": "Success","StatusCode": "200"},indent = 4)
 
 def Update_FoodMenu_Flag(reqeust):
-   dbput("update table_details set disp_fm_flag=1")
+   dbput("update table_details set disp_fm_flag=0")
    return json.dumps({"Return": "Record Updated Successfully","ReturnCode": "RUS",
                       "Status": "Success","StatusCode": "200"},indent = 4)   
   
