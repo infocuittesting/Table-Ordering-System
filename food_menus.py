@@ -205,8 +205,9 @@ def Select_Food_Offers(request):
   return json.dumps({"Return": "Record Retrived Successfully","ReturnCode": "RRS","Returnvalue":get_food_offers,
                      "Status": "Success","StatusCode": "200"},indent = 4)
 
-def Update_FoodMenu_Flag(reqeust):
-   dbput("update table_details set disp_fm_flag=0")
+def Update_FoodMenu_Flag(request):
+   d = request.json
+   dbput("update table_details set disp_fm_flag=0 where table_no='"+str(d['table_no'])+"'")
    return json.dumps({"Return": "Record Updated Successfully","ReturnCode": "RUS",
                       "Status": "Success","StatusCode": "200"},indent = 4)   
   
