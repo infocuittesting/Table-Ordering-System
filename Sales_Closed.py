@@ -14,5 +14,5 @@ def Sales_Closed(request):
 
    dbput("delete from food_order where  date(datetime)='"+str(yesterday)+"'")
    dbput("delete from order_comments where date(comments_time) = '"+str(yesterday)+"'")
-  
+   dbput("update users  set  todayorder_flag=1,fdorderwaiter_flag=1")
    return json.dumps({"Return": "Sales Closed","ReturnCode": "SC","Status": "Success","StatusCode": "200"},indent = 4)

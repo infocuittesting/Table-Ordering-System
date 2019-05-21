@@ -2,6 +2,7 @@
 from sqlwrapper import *
 from Fetch_Current_Datetime import *
 from collections import defaultdict
+import json
 def Query_Table_Status(request):
     get_table_details = json.loads(dbget("select login_status.login_status,payment_type.*,table_status.table_status,\
                                          table_details.*,order_timings.order_time,order_timings.bill_request_time,order_timings.close_time from table_details\
@@ -20,6 +21,7 @@ def Update_Food_Order_Status_Item(request):
     try:
 
         dbput("update food_order set order_status_id = '"+str(d['order_status_id'])+"' where order_details_id = '"+str(d['order_details_id'])+"'")
+        dbput("update users  set  todayorder_flag=1,fdorderwaiter_flag=1")
         return json.dumps({"Return": "Record Updated Successfully","ReturnCode": "RUS","Status": "Success","StatusCode": "200"},indent = 4)
     except:
         return json.dumps({"Return":"Wrong Value Error","ReturnCode":"WVE"})
@@ -55,7 +57,7 @@ def Update_ReadyforPayment_Status(request):
             s = {'table_status_id' : 3,'payment_type_id':d['payment_type_id']}
             
             gensql('update','table_details',s,e)
-            
+            dbput("update resturants set tablestatus_flag=1")
             return json.dumps({"Return": "Record Updated Successfully","ReturnCode": "RUS",
                                "Status": "Success","StatusCode": "200"},indent = 4)
         else:
@@ -79,13 +81,12 @@ def Update_Table_Available_Status(request):
        s = {'table_status_id' : 1,'payment_type_id':3}
        z = {'table_no':d['table_no']}
        gensql('update','table_details',s,z)
-
+       dbput("update resturants set tablestatus_flag=1")
        e = {'order_status_id':7}
        z.update({"order_no":d['order_no']})
        gensql('update','food_order',e,z)
-       
-       
-       
+       dbput("update users  set  todayorder_flag=1,fdorderwaiter_flag=1")
+
        return json.dumps({"Return": "Record Updated Successfully","ReturnCode": "RUS","Status": "Success","StatusCode": "200"},indent = 4)
    
 def Get_Order_Item_Table(request):
@@ -154,16 +155,20 @@ def Update_Notification_Status(request):
         
         dbput("update food_order set notification_status_id='"+str(d['notification_status_id'])+"',\
               notification_time='"+str(application_datetime().strftime("%Y-%m-%d %H:%M:%S"))+"' where order_details_id in ("+values+")")
+
     else:
       dbput("update food_order set notification_status_id='"+str(d['notification_status_id'])+"' where order_details_id in ("+values+")")
+    dbput("update resturants set tablestatus_flag=1;"
+          "update users  set  todayorder_flag=1,fdorderwaiter_flag=1,notifditem_flag=1")
     return json.dumps({"Return": "Record Updated Successfully","ReturnCode": "RUS","Status": "Success","StatusCode": "200"},indent = 4)
 def ServeAll_Food_Items(request):
     d = request.json
-    #values = ','.join("'{0}'".format(x) for x in d['order_details_id'])
+
     values = ', '.join(map(str, d['order_details_id']))
     print(values)
     dbput("update food_order set notification_status_id='2',order_status_id = '6',\
               notification_time='"+str(application_datetime().strftime("%Y-%m-%d %H:%M:%S"))+"' where order_details_id in ("+values+")")
+    dbput("update users  set  todayorder_flag=1,fdorderwaiter_flag=1,notifditem_flag=1")
     return json.dumps({"Return": "Record Updated Successfully","ReturnCode": "RUS","Status": "Success","StatusCode": "200"},indent = 4)
 def Query_Notification_Food_Items(request):
     notify_time,final_results,table_no = [],[],[]

@@ -11,6 +11,7 @@ from Billing_Application import *
 from Tablet_Application import *
 from Sales_Closed import *
 from Report import *
+from Changes_Flag import *
 #below i set path for web application
 
 @TOS.route("/",methods=['GET','POST'])
@@ -104,9 +105,10 @@ def loginlogout():
 @TOS.route("/Query_Extra_Item_Category",methods=['GET','POST'])
 def Extraitem():
     return Query_Extra_Item_Category(request)
-@TOS.route("/Update_FoodMenu_Flag",methods=['GET','POST'])
+@TOS.route("/Update_FoodMenu_Flag",methods=['POST'])
 def UpdateFoodMenuFlag():
     return Update_FoodMenu_Flag(request)
+
 #------------sales closed-------------
 @TOS.route("/Sales_Closed",methods=['GET'])
 def salesclosed():
@@ -122,6 +124,29 @@ def category_base_report():
 def insertfeedback():
     return Insert_Feedback(request)
 
+#------------- Changes Flag -------------------------#
+
+@TOS.route("/Get_FoodMenu_Flag",methods=['POST'])
+def GetFoodMenuFlag():
+    return Get_FoodMenu_Flag(request)
+
+@TOS.route("/Get_TableStatus_Flag",methods=['GET','POST'])
+def GetTableStatusFlag():
+    return Get_TableStatus_Flag(request)
+
+@TOS.route("/Update_TableStatus_Flag",methods=['GET','POST'])
+def UpdateTableStatusFlag():
+    return Update_TableStatus_Flag(request)
+
+@TOS.route("/Get_Allkot_Flag",methods=['GET','POST'])
+def GetAllkotFlag():
+    return Get_Allkot_Flag(request)
+
+@TOS.route("/Update_Allkot_Flag",methods=['GET','POST'])
+def UpdateAllkotlag():
+    return Update_Allkot_Flag(request)
+
+
 @TOS.errorhandler(404)
 def unhandled_exception(e):
    return(json.dumps({"Return":"page Not Found","Returncode":"404"}))
@@ -131,4 +156,4 @@ def unhandled_exception(e):
 	
 if __name__ == "__main__":
     #TOS.run(debug=True)
-    TOS.run(host ='192.168.99.1',port =5000)#run web application
+    TOS.run(host ='127.0.0.1',port =5000)#run web application

@@ -36,15 +36,10 @@ def Place_Order(request):
                 
                 for item in items_value:
                     list1.append(tuple((order_no,d['table_no'],item['food_id'],item['quantity'],item['order_status_id'],str(application_datetime().strftime("%Y-%m-%d %H:%M:%S")),3)))
-                    #item.update({'order_no':order_no,'notification_status_id':3,'datetime':application_datetime(),'table_no':d['table_no']})
-                    #get_items = json.loads(dbget("select food_status_id,food_name from food_menu where food_id = '"+str(item['food_id'])+"' "))
-                    #if get_items[0]['food_status_id'] == 1:
-                     #  gensql('insert','food_order',item)
-                    #else:
-                     #   unavailable_item.append({"food_name":get_items[0]['food_name'],"food_id":item['food_id']})
+
                 values = ', '.join(map(str, list1))
                 dbput("INSERT INTO  food_order (order_no, table_no, food_id, quantity, order_status_id, datetime, notification_status_id)VALUES {}".format(values))
-                       
+                dbput("update users  set  todayorder_flag=1,fdorderwaiter_flag=1")
                 try:
                     maintain_time = {"order_no":order_no,"order_time":application_datetime(),"table_no":str(d['table_no'])}
                     gensql('insert','order_timings',maintain_time)
@@ -60,7 +55,7 @@ def Place_Order(request):
                 else:
                     pass
                 dbput("update table_details set table_status_id = '2' where table_no = "+str(d['table_no'])+"")
-                
+                dbput("update resturants set tablestatus_flag=1")
                 return json.dumps({"Return": "Record Inserted Successfully","ReturnCode": "RIS","Status": "Success","StatusCode": "200"},indent = 4)
             else:
               return json.dumps({"Return": "Items Not Avialble","ReturnCode": "INA","Status": "Success","StatusCode": "200"},indent = 4)

@@ -28,6 +28,7 @@ def Add_food_menu(request):
           if d['item_category_id'].isdigit():
               try:
                  gensql('insert','food_menu',d)
+                 dbput("update users set fdmenu_flag=1")
                  return json.dumps({"Return": "Record Inserted Successfully","ReturnCode": "RIS","Status": "Success","StatusCode": "200"},indent = 4)
               except:
                  return json.dumps({"Return":"Duplicate Key Error or Value Error","ReturnCode":"DKEOV"},indent=2)
@@ -53,7 +54,8 @@ def Add_food_menu(request):
                  try:
                   d = {k:v for k,v in d.items() if v != ''  if v is not None if k  not in ('image_url')}
                   gensql('insert','food_menu',d)
-                  dbput("update table_details set disp_fm_flag=1")
+                  dbput("update table_details set disp_fm_flag=1;"
+                        "update users set fdmenu_flag=1")
                  except:
                    
                    return json.dumps({"Return":"food name Duplicate Key Error or Value Error","ReturnCode":"DKEOV"},indent=2)
@@ -95,8 +97,8 @@ def Update_Food_Menus(request):
           d['food_name'] = string.capwords(d['food_name'])
          
          # try:
-          update_item = gensql('update','food_menu',d,s)
-            
+          gensql('update','food_menu',d,s)
+
          # except:
           #  return json.dumps({"Return":"Duplicate Key Error or Value Error","ReturnCode":"DKEOV"},indent=2)
    else:
@@ -105,7 +107,8 @@ def Update_Food_Menus(request):
       d['food_name'] = re.sub("'","''",d['food_name'])
       d['food_name'] = string.capwords(d['food_name'])
       
-      update_item = gensql('update','food_menu',d,s)
+      gensql('update','food_menu',d,s)
+
        
    if len(image_url) != 0:
               get_url = requests.post("https://cktab4aq0h.execute-api.us-east-1.amazonaws.com/tosimageupload",json={"base64":image_url})
@@ -115,6 +118,7 @@ def Update_Food_Menus(request):
               e['category_id'] = d['item_category_id']
               #try:
               gensql('update','food_category',z,e)
+
               #except:
                 # return json.dumps({"Return":"Wrong Category Id value Error","ReturnCode":"WCVE"},indent=2)
    else:
@@ -123,6 +127,7 @@ def Update_Food_Menus(request):
               
               gensql('update','food_category',z,e)
    dbput("update table_details set disp_fm_flag=1")
+   dbput("update users set fdmenu_flag=1")
    return json.dumps({"Return": "Record Updated Successfully","ReturnCode": "RUS","Status": "Success","StatusCode": "200"},indent = 4)
 
 def Display_Disable_Food_Item(request):
@@ -155,19 +160,8 @@ def Add_Food_Offers(request):
          print("fada")
          d = {k:v for k,v in d.items() if v is not None if k not in ('category_id')}
          gensql('insert','food_offers',d)
-      '''
-      getcount  = json.loads(dbget("select count(*) from food_offers where food_id = '"+str(d['food_id'])+"'"))
-      
-      if getcount[0]['count'] != 0:
-         a = {k:v for k,v in d.items() if v is not None if k not in ('food_id')}
-         b = {k:v for k,v in d.items() if k in ('food_id')}
-         gensql('update','food_offers',a,b)
-         
-      else:
-         print("its OFFER INSERT inside")
-         d = {k:v for k,v in d.items() if v is not None}
-         gensql('insert','food_offers',d)
-      '''
+
+      dbput("update users set fdmenu_flag=1")
       return json.dumps({"Return": "Record Inserted Successfully","ReturnCode": "RIS","Status": "Success","StatusCode": "200"},indent = 4)
 def Update_Food_Offers(request):
    d = request.json
@@ -193,6 +187,7 @@ def Update_Food_Offers(request):
          a = {k:v for k,v in d.items() if v is not None if k not in ('food_id','category_id')}
          b = {k:v for k,v in d.items() if k in ('food_id')}
          gensql('update','food_offers',a,b)
+   dbput("update users set fdmenu_flag=1")
    return json.dumps({"Return": "Record Updated Successfully","ReturnCode": "RUS","Status": "Success","StatusCode": "200"},indent = 4)
    
 def Select_Food_Offers(request):

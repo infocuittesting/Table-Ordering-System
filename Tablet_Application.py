@@ -3,7 +3,7 @@ import base64
 from collections import Counter
 def Display_Food_Menus(request):
 
-       d = request.json 
+       #d = request.json
     
        food_details,food_menu_details = [],[]
        GET_FOOD_MENUS = json.loads(dbget("select food_type.*,food_category.*,food_status.status, food_menu.* from food_menu\
@@ -67,9 +67,7 @@ def Display_Food_Menus(request):
                           "Today_Special":{"categry_name":"Today_Specials",
                                            "category_img":"https://s3.amazonaws.com/image-upload-rekognition/tosfoodimages/new_work_cadillacmagazine-624x406.png",
                                            "items":today_specials
-                                           },
-                          "Changes_Flage":json.loads(dbget("select disp_fm_flag as d from table_details \
-                                                            where table_no='"+str(d['table_no'])+"'"))[0]['d']
+                                           }
                            }
                           ]
 
