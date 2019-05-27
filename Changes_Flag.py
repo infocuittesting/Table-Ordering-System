@@ -16,7 +16,7 @@ def Get_TableStatus_Flag(reqeust):
                        "Status": "Success", "StatusCode": "200"}, indent=4)
 
 def Update_TableStatus_Flag(reqeust):
-    dbput("update resturants set tablestatus_flag=1")
+    dbput("update resturants set tablestatus_flag=0")
     return json.dumps(
         {"Return": "Record Updated Successfully", "ReturnCode": "RUS", "Status": "Success",
          "StatusCode": "200"},indent=4)
