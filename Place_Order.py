@@ -54,8 +54,9 @@ def Place_Order(request):
                     gensql('insert','order_comments',order_comments)
                 else:
                     pass
-                dbput("update table_details set table_status_id = '2' where table_no = "+str(d['table_no'])+"")
-                dbput("update resturants set tablestatus_flag=1")
+                dbput("update table_details set table_status_id = '2' where table_no = "+str(d['table_no'])+";\ 
+                       update resturants set tablestatus_flag=1")
+                #dbput("update resturants set tablestatus_flag=1")
                 return json.dumps({"Return": "Record Inserted Successfully","ReturnCode": "RIS","Status": "Success","StatusCode": "200"},indent = 4)
             else:
               return json.dumps({"Return": "Items Not Avialble","ReturnCode": "INA","Status": "Success","StatusCode": "200"},indent = 4)
