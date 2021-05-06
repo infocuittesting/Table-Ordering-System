@@ -9,6 +9,6 @@ tzlocal==1.4
 Werkzeug==0.12.2
 requests
 pushjack==1.4.0
-Flask-Cors==3.0.3
+Flask-Cors==3.0.9
 matplotlib==3.0.3
 pygal==2.4.0
